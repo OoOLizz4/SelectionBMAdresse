@@ -25,6 +25,8 @@ from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, QVariant
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import *
 
+from qgis.core import*
+
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog
@@ -190,9 +192,8 @@ class Camposphere:
             self.dlg = CamposphereDialog()
 
          # ******************** création de signal de cponnexion ********************************
-            self.dlg.boutonVAdresse.clicked.connect(self.load_shapefile)
-            self.dlg.boutonVBM.clicked.connect(self.load_shapefile)
-            self.dlg.boutonVResult.clicked.connect(self.load_shapefile)
+            self.dlg.boutonVAdresse.clicked.connect(self.load_csv_Adresse)
+            self.dlg.boutonVBM.clicked.connect(self.load_shapefile_BM)
 
         # show the dialog
         self.dlg.show()
@@ -204,12 +205,29 @@ class Camposphere:
             # substitute with your code.
             pass
     
-    # ********************* Fonction pour charger un shapefile lorsque le bouton 3 est cliqué ************************
+    # ********************* Fonction pour charger un shapefile lorsque le boutonVBM est cliqué ************************
 
-    def load_shapefile(self):
+    def load_shapefile_BM(self):
         file_dialog = QFileDialog()
         file_dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
-        file_dialog.setNameFilter("Shapefiles (*.gpkg);;GeoPackage (*.shp)")
+        file_dialog.setNameFilter("GeoPackage (*.gpkg);;Shapefiles (*.shp)")
+        file_dialog.setViewMode(QFileDialog.ViewMode.List)
+
+        if file_dialog.exec():
+            file_paths = file_dialog.selectedFiles()
+            if file_paths:
+                file_path = file_paths[0]
+                self.dlg.lineBM.setText(file_path)  # Mets à jour l'UI
+                if self.initialise_BM():  # Appelle la nouvelle fonction
+                    QgsProject.instance().addMapLayer(self.gdf)
+                    QMessageBox.information(None, "Chargement réussi", f"Fichier chargé avec {self.gdf.featureCount()} objets géométriques.")
+
+    # ********************* Fonction pour charger un shapefile lorsque le boutonVAdresse est cliqué ************************
+
+    def load_csv_Adresse(self):
+        file_dialog = QFileDialog()
+        file_dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
+        file_dialog.setNameFilter("Valeurs séparées par une virgule (*.csv);;Shapefiles (*.shp)")
         file_dialog.setViewMode(QFileDialog.ViewMode.List)
 
         if file_dialog.exec():
@@ -217,10 +235,53 @@ class Camposphere:
             if file_paths:
                 file_path = file_paths[0]
                 self.dlg.lineAdresse.setText(file_path)  # Mets à jour l'UI
-                if self.initialise_gdf():  # Appelle la nouvelle fonction
+                if self.initialise_Adresse():  # Appelle la nouvelle fonction
                     QgsProject.instance().addMapLayer(self.gdf)
                     QMessageBox.information(None, "Chargement réussi", f"Fichier chargé avec {self.gdf.featureCount()} objets géométriques.")
-        self.dlg.comboBox.enabled=True
 
+#Fonction permettant de mettre à jour BM************************
+    
+    def initialise_BM(self):
+        file_path = self.dlg.lineBM.text()
+        if os.path.exists(file_path):
+            try:
+                layer_name = os.path.splitext(os.path.basename(file_path))[0]
+                layer = QgsVectorLayer(file_path, layer_name, "ogr")
 
+                if not layer.isValid():
+                    raise Exception("La couche n'est pas valide.")
+
+                # Initialise la variable gdf
+                self.gdf = layer
+                
+                return True  # Succès
+            except Exception as e:
+                QMessageBox.critical(None, "Erreur", f"Erreur lors de l'initialisation de la couche : {str(e)}")
+                return False
+        else:
+            QMessageBox.warning(None, "Chemin invalide", "Le fichier spécifié n'existe pas.")
+            return False
+
+#Fonction permettant de mettre à jour Adresse************************
+    
+    def initialise_Adresse(self):
+        file_path = self.dlg.lineAdresse.text()
+        if os.path.exists(file_path):
+            try:
+                layer_name = os.path.splitext(os.path.basename(file_path))[0]
+                layer = QgsVectorLayer(file_path, layer_name, "ogr")
+
+                if not layer.isValid():
+                    raise Exception("La couche n'est pas valide.")
+
+                # Initialise la variable gdf
+                self.gdf = layer
+                
+                return True  # Succès
+            except Exception as e:
+                QMessageBox.critical(None, "Erreur", f"Erreur lors de l'initialisation de la couche : {str(e)}")
+                return False
+        else:
+            QMessageBox.warning(None, "Chemin invalide", "Le fichier spécifié n'existe pas.")
+            return False
 
