@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/extract_bat_modulaire" >
+        <file>icon.png</file>
+    </qresource>
+</RCC>
