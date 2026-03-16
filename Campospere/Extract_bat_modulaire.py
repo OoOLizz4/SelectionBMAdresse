@@ -21,9 +21,9 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
+from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, QVariant
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QAction
+from qgis.PyQt.QtWidgets import *
 
 # Initialize Qt resources from file resources.py
 from .resources import *
@@ -188,6 +188,11 @@ class Camposphere:
         if self.first_start == True:
             self.first_start = False
             self.dlg = CamposphereDialog()
+
+         # ******************** création de signal de cponnexion ********************************
+            self.dlg.boutonVAdresse.clicked.connect(self.load_shapefile)
+            self.dlg.boutonVBM.clicked.connect(self.load_shapefile)
+            self.dlg.boutonVResult.clicked.connect(self.load_shapefile)
 
         # show the dialog
         self.dlg.show()
