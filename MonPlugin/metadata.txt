@@ -4,7 +4,7 @@
 
 [general]
 name=Extraction Batiment Modulaire
-qgisMinimumVersion=3.99
+qgisMinimumVersion=3.00
 description=Premet d'extraire les batiments modulaire dans une parcelle cadastrale
 version=0.1
 author=Lisa Verrier & Daouda Timera
