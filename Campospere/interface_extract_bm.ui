@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Traitement</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QWidget" name="gridLayoutWidget">
@@ -44,6 +44,9 @@
         <string>Bâtiments modulaires correspondant aux adresses :</string>
        </property>
       </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QLineEdit" name="lineEdit"/>
      </item>
      <item row="1" column="1">
       <widget class="QComboBox" name="comboBox">
@@ -87,8 +90,12 @@
        </property>
       </widget>
      </item>
-     <item row="5" column="1">
-      <widget class="QLineEdit" name="lineEdit"/>
+     <item row="6" column="1">
+      <widget class="QPushButton" name="pushButton">
+       <property name="text">
+        <string>Lancer le traitement</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>

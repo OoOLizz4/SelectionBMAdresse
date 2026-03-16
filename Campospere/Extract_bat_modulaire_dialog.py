@@ -29,7 +29,7 @@ from qgis.PyQt import QtWidgets
 
 # This loads your .ui file so that PyQt can populate your plugin with the elements from Qt Designer
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'extract_bat_modulaire_dialog_base.ui'))
+    os.path.dirname(__file__), 'interface_extract_bm.ui'))
 
 
 class CamposphereDialog(QtWidgets.QDialog, FORM_CLASS):
