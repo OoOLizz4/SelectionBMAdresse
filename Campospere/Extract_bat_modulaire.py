@@ -163,7 +163,7 @@ class Camposphere:
         icon_path = ':/plugins/extract_bat_modulaire/icon.png'
         self.add_action(
             icon_path,
-            text=self.tr(u'Extraction'),
+            text=self.tr(u'Séléction des BM'),
             callback=self.run,
             parent=self.iface.mainWindow())
 
@@ -198,3 +198,24 @@ class Camposphere:
             # Do something useful here - delete the line containing pass and
             # substitute with your code.
             pass
+    
+    # ********************* Fonction pour charger un shapefile lorsque le bouton 3 est cliqué ************************
+
+    def load_shapefile(self):
+        file_dialog = QFileDialog()
+        file_dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
+        file_dialog.setNameFilter("Shapefiles (*.gpkg);;GeoPackage (*.shp)")
+        file_dialog.setViewMode(QFileDialog.ViewMode.List)
+
+        if file_dialog.exec():
+            file_paths = file_dialog.selectedFiles()
+            if file_paths:
+                file_path = file_paths[0]
+                self.dlg.lineEdit.setText(file_path)  # Mets à jour l'UI
+                if self.initialise_gdf():  # Appelle la nouvelle fonction
+                    QgsProject.instance().addMapLayer(self.gdf)
+                    QMessageBox.information(None, "Chargement réussi", f"Fichier chargé avec {self.gdf.featureCount()} objets géométriques.")
+        self.dlg.comboBox.enabled=True
+
+
+

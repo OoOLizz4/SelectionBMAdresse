@@ -10,10 +10,11 @@ version=0.1
 author=Lisa Verrier & Daouda Timera
 email=lisa.verrier04@gmail.com, timeradaouda5@gmail.com
 
-about=Provide a brief description of the plugin and its purpose.
+about= Input : un csv contenant des coordonnées + une couche contenant des polygones de bâtiments modulaires
+Output : une couche de polygone contenant les bâtiments modulaires aux adresses demandées
 
 tracker=http://bugs
-repository=http://repo
+repository=https://github.com/OoOLizz4/SelectionBMAdresse/
 # End of mandatory metadata
 
 # Recommended items:
