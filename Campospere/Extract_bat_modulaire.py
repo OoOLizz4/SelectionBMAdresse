@@ -194,6 +194,9 @@ class Camposphere:
          # ******************** création de signal de cponnexion ********************************
             self.dlg.boutonVAdresse.clicked.connect(self.load_csv_Adresse)
             self.dlg.boutonVBM.clicked.connect(self.load_shapefile_BM)
+            
+            self.dlg.boutonLancement.clicked.connect(self.traitement)
+
 
         # show the dialog
         self.dlg.show()
@@ -239,7 +242,7 @@ class Camposphere:
                     QgsProject.instance().addMapLayer(self.gdf)
                     QMessageBox.information(None, "Chargement réussi", f"Fichier chargé avec {self.gdf.featureCount()} objets géométriques.")
 
-#Fonction permettant de mettre à jour BM************************
+    # ********************* Fonction pour mettre à jour BM ************************
     
     def initialise_BM(self):
         file_path = self.dlg.lineBM.text()
@@ -262,7 +265,7 @@ class Camposphere:
             QMessageBox.warning(None, "Chemin invalide", "Le fichier spécifié n'existe pas.")
             return False
 
-#Fonction permettant de mettre à jour Adresse************************
+    # ********************* Fonction pour mettre à jour Adresse ************************
     
     def initialise_Adresse(self):
         file_path = self.dlg.lineAdresse.text()
@@ -285,3 +288,7 @@ class Camposphere:
             QMessageBox.warning(None, "Chemin invalide", "Le fichier spécifié n'existe pas.")
             return False
 
+        # ********************* Fonction pour démarrer les traitements ************************
+
+    def traitement(self):
+        QMessageBox.information(None, "Echec du traitement", f"Le code de traitement n'existe pas encore :,(")
