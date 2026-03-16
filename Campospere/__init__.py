@@ -32,5 +32,5 @@ def classFactory(iface):  # pylint: disable=invalid-name
     :type iface: QgsInterface
     """
     #
-    from .Extract_bat_modulaire import Camposphere
+    from .extract_bat_modulaire import Camposphere
     return Camposphere(iface)
