@@ -211,7 +211,7 @@ class Camposphere:
             file_paths = file_dialog.selectedFiles()
             if file_paths:
                 file_path = file_paths[0]
-                self.dlg.lineEdit.setText(file_path)  # Mets à jour l'UI
+                self.dlg.lineAdresse.setText(file_path)  # Mets à jour l'UI
                 if self.initialise_gdf():  # Appelle la nouvelle fonction
                     QgsProject.instance().addMapLayer(self.gdf)
                     QMessageBox.information(None, "Chargement réussi", f"Fichier chargé avec {self.gdf.featureCount()} objets géométriques.")
