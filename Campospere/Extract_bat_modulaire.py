@@ -209,7 +209,9 @@ class Camposphere:
          # ******************** création de signal de cponnexion ********************************
             self.dlg.boutonVAdresse.clicked.connect(self.load_csv_Adresse)
             self.dlg.boutonVBM.clicked.connect(self.load_shapefile_BM)
-            
+            self.dlg.boutonVResult.clicked.connect(self.load_shapefile_BM)
+
+
             self.dlg.boutonLancement.clicked.connect(self.traitement)
 
 
@@ -240,7 +242,7 @@ class Camposphere:
                     QgsProject.instance().addMapLayer(self.bm)
                     QMessageBox.information(None, "Chargement réussi", f"Fichier chargé avec {self.bm.featureCount()} objets géométriques.")
 
-    # ********************* Fonction pour charger un shapefile lorsque le boutonVAdresse est cliqué ************************
+    # ********************* Fonction pour charger un csv lorsque le boutonVAdresse est cliqué ************************
 
     def load_csv_Adresse(self):
         file_dialog = QFileDialog()
@@ -254,6 +256,23 @@ class Camposphere:
                 file_path = file_paths[0]
                 self.dlg.lineAdresse.setText(file_path)  # Mets à jour l'UI
                 if self.initialise_Adresse():  # Appelle la nouvelle fonction
+                    QgsProject.instance().addMapLayer(self.adresse)
+                    QMessageBox.information(None, "Chargement réussi", f"Fichier chargé avec {self.adresse.featureCount()} objets géométriques.")
+
+        # ********************* Fonction pour charger un shapefile lorsque le boutonVResult est cliqué ************************
+
+    def load_shp_result(self):
+        file_dialog = QFileDialog()
+        file_dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
+        file_dialog.setNameFilter("Shapefiles (*.shp)")
+        file_dialog.setViewMode(QFileDialog.ViewMode.List)
+
+        if file_dialog.exec():
+            file_paths = file_dialog.selectedFiles()
+            if file_paths:
+                file_path = file_paths[0]
+                self.dlg.lineAdresse.setText(file_path)  # Mets à jour l'UI
+                if self.initialise_Result():  # Appelle la nouvelle fonction
                     QgsProject.instance().addMapLayer(self.adresse)
                     QMessageBox.information(None, "Chargement réussi", f"Fichier chargé avec {self.adresse.featureCount()} objets géométriques.")
 
