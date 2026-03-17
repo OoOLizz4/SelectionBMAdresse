@@ -25,13 +25,24 @@ from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, QVariant
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import *
 
-from qgis.core import*
+from qgis.core import* # QgsVectorLayer,QgsRasterLayer, QgsProject, QgsField,QgsCoordinateTransform, QgsCoordinateReferenceSystem,QgsPointXY, QgsDistanceArea
+
+import processing
+
+
+#Le code de traitement situé dans ce dossier 
+from .traitement_cadastre import *
 
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog
 from .extract_bat_modulaire_dialog import CamposphereDialog
 import os.path
+import skimage
+import numpy as np
+from osgeo import gdal, osr
+import psycopg2
+
 
 
 class Camposphere:
@@ -213,7 +224,7 @@ class Camposphere:
     def load_shapefile_BM(self):
         file_dialog = QFileDialog()
         file_dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
-        file_dialog.setNameFilter("GeoPackage (*.gpkg);;Shapefiles (*.shp)")
+        file_dialog.setNameFilter("Shapefiles (*.shp)")
         file_dialog.setViewMode(QFileDialog.ViewMode.List)
 
         if file_dialog.exec():
@@ -222,8 +233,8 @@ class Camposphere:
                 file_path = file_paths[0]
                 self.dlg.lineBM.setText(file_path)  # Mets à jour l'UI
                 if self.initialise_BM():  # Appelle la nouvelle fonction
-                    QgsProject.instance().addMapLayer(self.gdf)
-                    QMessageBox.information(None, "Chargement réussi", f"Fichier chargé avec {self.gdf.featureCount()} objets géométriques.")
+                    QgsProject.instance().addMapLayer(self.bm)
+                    QMessageBox.information(None, "Chargement réussi", f"Fichier chargé avec {self.bm.featureCount()} objets géométriques.")
 
     # ********************* Fonction pour charger un shapefile lorsque le boutonVAdresse est cliqué ************************
 
@@ -239,8 +250,8 @@ class Camposphere:
                 file_path = file_paths[0]
                 self.dlg.lineAdresse.setText(file_path)  # Mets à jour l'UI
                 if self.initialise_Adresse():  # Appelle la nouvelle fonction
-                    QgsProject.instance().addMapLayer(self.gdf)
-                    QMessageBox.information(None, "Chargement réussi", f"Fichier chargé avec {self.gdf.featureCount()} objets géométriques.")
+                    QgsProject.instance().addMapLayer(self.adresse)
+                    QMessageBox.information(None, "Chargement réussi", f"Fichier chargé avec {self.adresse.featureCount()} objets géométriques.")
 
     # ********************* Fonction pour mettre à jour BM ************************
     
@@ -254,8 +265,8 @@ class Camposphere:
                 if not layer.isValid():
                     raise Exception("La couche n'est pas valide.")
 
-                # Initialise la variable gdf
-                self.gdf = layer
+                # Initialise la variable bm
+                self.bm = layer
                 
                 return True  # Succès
             except Exception as e:
@@ -277,8 +288,8 @@ class Camposphere:
                 if not layer.isValid():
                     raise Exception("La couche n'est pas valide.")
 
-                # Initialise la variable gdf
-                self.gdf = layer
+                # Initialise la variable adresse
+                self.adresse = layer
                 
                 return True  # Succès
             except Exception as e:
@@ -291,4 +302,6 @@ class Camposphere:
         # ********************* Fonction pour démarrer les traitements ************************
 
     def traitement(self):
+        #faut que je vérifie si self. bm et self.adresse existe
         QMessageBox.information(None, "Echec du traitement", f"Le code de traitement n'existe pas encore :,(")
+        processing.run("script:Selection BM selon adresse", {'bm': self.bm ,'input_points': self.adresse ,'parcelles_cadastrales':"WFS://pagingEnabled='default' preferCoordinatesForWfsT11='false' restrictToRequestBBOX='1' srsname='EPSG:3857' typename='CADASTRALPARCELS.PARCELLAIRE_EXPRESS:parcelle' url='https://data.geopf.fr/wfs/' version='auto'",'Parcelles_selec':'C:/Users/Formation/Desktop/PDI/travail_encours/donnees-test/donnees_test.gpkg','Bm_adresse_selec':'C:/Users/Formation/Desktop/PDI/travail_encours/donnees-test/donnees_test2.gpkg'})
