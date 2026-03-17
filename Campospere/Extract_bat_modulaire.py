@@ -303,5 +303,5 @@ class Camposphere:
 
     def traitement(self):
         #faut que je vérifie si self. bm et self.adresse existe
-        QMessageBox.information(None, "Echec du traitement", f"Le code de traitement n'existe pas encore :,(")
-        processing.run("script:Selection BM selon adresse", {'bm': self.bm ,'input_points': self.adresse ,'parcelles_cadastrales':"WFS://pagingEnabled='default' preferCoordinatesForWfsT11='false' restrictToRequestBBOX='1' srsname='EPSG:3857' typename='CADASTRALPARCELS.PARCELLAIRE_EXPRESS:parcelle' url='https://data.geopf.fr/wfs/' version='auto'",'Parcelles_selec':'C:/Users/Formation/Desktop/PDI/travail_encours/donnees-test/donnees_test.gpkg','Bm_adresse_selec':'C:/Users/Formation/Desktop/PDI/travail_encours/donnees-test/donnees_test2.gpkg'})
+        QMessageBox.information(None, "Echec du traitement ?", f"Le traitement est lancé mais pas sûr qu'il marche.")
+        processing.run("traitemente_cadastre.py", {'bm': self.bm ,'input_points': self.adresse ,'parcelles_cadastrales':"WFS://pagingEnabled='default' preferCoordinatesForWfsT11='false' restrictToRequestBBOX='1' srsname='EPSG:3857' typename='CADASTRALPARCELS.PARCELLAIRE_EXPRESS:parcelle' url='https://data.geopf.fr/wfs/' version='auto'",'Parcelles_selec':'C:/Users/Formation/Desktop/PDI/travail_encours/donnees-test/donnee_test.gpkg','Bm_adresse_selec':'C:/Users/Formation/Desktop/PDI/travail_encours/donnees-test/donnee_test2.gpkg'})
