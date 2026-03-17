@@ -26,11 +26,10 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import *
 
 from qgis.core import* # QgsVectorLayer,QgsRasterLayer, QgsProject, QgsField,QgsCoordinateTransform, QgsCoordinateReferenceSystem,QgsPointXY, QgsDistanceArea
-
 import processing
 
 
-#Le code de traitement situé dans ce dossier 
+#Chargement du code de traitement situé dans ce dossier 
 from .traitement_cadastre import *
 
 # Initialize Qt resources from file resources.py
@@ -58,6 +57,8 @@ class Camposphere:
         """
         # Save reference to the QGIS interface
         self.iface = iface
+        #Sauvegardela référence au programme que je vais utiliser 
+        self.provider = None
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
         # initialize locale
@@ -172,8 +173,9 @@ class Camposphere:
 
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
-
-        icon_path = ':/plugins/extract_bat_modulaire/icon.png'
+        self.provider = ProviderTraitement()
+        QgsApplication.processingRegistry().addProvider(self.provider)
+        icon_path = ':SelecBMAdresse/Camposphere/icon.png'
         self.add_action(
             icon_path,
             text=self.tr(u'Séléction des BM'),
@@ -191,6 +193,8 @@ class Camposphere:
                 self.tr(u'&Extraction Batiment Modulaire'),
                 action)
             self.iface.removeToolBarIcon(action)
+        if self.provider:
+            QgsApplication.processingRegistry().removeProvider(self.provider)
 
 
     def run(self):
@@ -299,9 +303,9 @@ class Camposphere:
             QMessageBox.warning(None, "Chemin invalide", "Le fichier spécifié n'existe pas.")
             return False
 
-        # ********************* Fonction pour démarrer les traitements ************************
+    # ********************* Fonction pour démarrer les traitements ************************
 
     def traitement(self):
         #faut que je vérifie si self. bm et self.adresse existe
         QMessageBox.information(None, "Echec du traitement ?", f"Le traitement est lancé mais pas sûr qu'il marche.")
-        processing.run("traitemente_cadastre.py", {'bm': self.bm ,'input_points': self.adresse ,'parcelles_cadastrales':"WFS://pagingEnabled='default' preferCoordinatesForWfsT11='false' restrictToRequestBBOX='1' srsname='EPSG:3857' typename='CADASTRALPARCELS.PARCELLAIRE_EXPRESS:parcelle' url='https://data.geopf.fr/wfs/' version='auto'",'Parcelles_selec':'C:/Users/Formation/Desktop/PDI/travail_encours/donnees-test/donnee_test.gpkg','Bm_adresse_selec':'C:/Users/Formation/Desktop/PDI/travail_encours/donnees-test/donnee_test2.gpkg'})
+        processing.run("providerT:selectionBMCadastre", {'bm': self.bm ,'input_points': self.adresse ,'parcelles_cadastrales':"WFS://pagingEnabled='default' preferCoordinatesForWfsT11='false' restrictToRequestBBOX='1' srsname='EPSG:3857' typename='CADASTRALPARCELS.PARCELLAIRE_EXPRESS:parcelle' url='https://data.geopf.fr/wfs/' version='auto'",'Parcelles_selec':'C:/Users/Formation/Desktop/PDI/travail_encours/donnees-test/donnee_test.gpkg','Bm_adresse_selec':'C:/Users/Formation/Desktop/PDI/travail_encours/donnees-test/donnee_test2.gpkg'})

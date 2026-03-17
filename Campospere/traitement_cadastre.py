@@ -5,6 +5,8 @@ from qgis.PyQt.QtWidgets import *
 from qgis.core import* # QgsVectorLayer,QgsRasterLayer, QgsProject, QgsField,QgsCoordinateTransform, QgsCoordinateReferenceSystem,QgsPointXY, QgsDistanceArea
 from qgis.processing import *
 
+import processing
+
 class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
 
     def initAlgorithm(self, config=None):
@@ -30,6 +32,7 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
         }
         outputs['ExtraireParLocalisation'] = processing.run('native:extractbylocation', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
         results['Parcelles_selec'] = outputs['ExtraireParLocalisation']['OUTPUT']
+        print("1er extraire par localisation passé")
 
         # Extraire par localisation
         alg_params = {
@@ -40,6 +43,8 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
         }
         outputs['ExtraireParLocalisation'] = processing.run('native:extractbylocation', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
         results['Bm_adresse_selec'] = outputs['ExtraireParLocalisation']['OUTPUT']
+        print("2e extraire par localisation passé")
+
 
         feedback.setCurrentStep(1)
         if feedback.isCanceled():
@@ -48,10 +53,10 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
         return results
     
     def name(self):
-        return 'Selection BM selon adresse'
+        return 'selectionBMCadastre'
 
     def displayName(self):
-        return 'Selection BM selon adresse'
+        return 'selectionBMCadastre'
 
     def group(self):
         return ''
@@ -61,3 +66,14 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
 
     def createInstance(self):
         return SelectionBmSelonAdresse()
+    
+class ProviderTraitement(QgsProcessingProvider):
+
+    def loadAlgorithms(self):
+        self.addAlgorithm(SelectionBmSelonAdresse())
+
+    def id(self):
+        return "providerT"
+
+    def name(self):
+        return "providerT"
