@@ -3,7 +3,6 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import *
 
 from qgis.core import* # QgsVectorLayer,QgsRasterLayer, QgsProject, QgsField,QgsCoordinateTransform, QgsCoordinateReferenceSystem,QgsPointXY, QgsDistanceArea
-from qgis.processing import *
 
 import processing
 
@@ -12,8 +11,7 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
     def initAlgorithm(self, config=None):
         self.addParameter(QgsProcessingParameterVectorLayer('bm', 'BM', types=[QgsProcessing.TypeVectorPolygon], defaultValue=None))
         self.addParameter(QgsProcessingParameterVectorLayer('input_points', 'INPUT_POINTS', types=[QgsProcessing.TypeVectorPoint], defaultValue=None))
-        self.addParameter(QgsProcessingParameterVectorLayer('parcelles_cadastrales', 'PARCELLES_CADASTRALES', types=[QgsProcessing.TypeVectorPolygon], defaultValue=None))
-        self.addParameter(QgsProcessingParameterFeatureSink('Parcelles_selec', 'PARCELLES_SELEC', type=QgsProcessing.TypeVectorAnyGeometry, createByDefault=True, defaultValue='./PARCELLES_SELEC'))
+        self.addParameter(QgsProcessingParameterVectorLayer('parcelles_cadastrales', 'PARCELLES_CADASTRALES', types=[QgsProcessing.TypeVectorPolygon], defaultValue=None))        
         self.addParameter(QgsProcessingParameterFeatureSink('Bm_adresse_selec', 'BM_Adresse_Selec', type=QgsProcessing.TypeVectorAnyGeometry, createByDefault=True, defaultValue=None))
 
     def processAlgorithm(self, parameters, context, model_feedback):
@@ -37,13 +35,15 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
         # Extraire par localisation
         alg_params = {
             'INPUT': parameters['bm'],
-            'INTERSECT': parameters['Parcelles_selec'],
+            'INTERSECT': outputs['ExtraireParLocalisation']['OUTPUT'],
             'PREDICATE': [6],  # est à l'intérieur
             'OUTPUT': parameters['Bm_adresse_selec']
         }
         outputs['ExtraireParLocalisation'] = processing.run('native:extractbylocation', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
         results['Bm_adresse_selec'] = outputs['ExtraireParLocalisation']['OUTPUT']
         print("2e extraire par localisation passé")
+
+        QgsProject.instance().addMapLayer(results['Bm_adresse_selec'])
 
 
         feedback.setCurrentStep(1)

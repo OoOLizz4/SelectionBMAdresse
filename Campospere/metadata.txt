@@ -13,6 +13,8 @@ email=lisa.verrier04@gmail.com, timeradaouda5@gmail.com
 about= Input : un csv contenant des coordonnées + une couche contenant des polygones de bâtiments modulaires
 Output : une couche de polygone contenant les bâtiments modulaires aux adresses demandées
 
+Nécessite le plug-in pyshp dans OSGeo
+
 tracker=http://bugs
 repository=https://github.com/OoOLizz4/SelectionBMAdresse/
 # End of mandatory metadata
