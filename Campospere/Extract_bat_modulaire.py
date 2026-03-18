@@ -82,6 +82,11 @@ class Camposphere:
         # Must be set in initGui() to survive plugin reloads
         self.first_start = None
 
+        #Les attributs qui vont servir aux fichiers plus tard
+        self.adresse = None
+        self.bm = None
+        self.resultat = None
+
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
         """Get the translation for a string using Qt translation API.
@@ -210,7 +215,7 @@ class Camposphere:
          # ******************** création de signal de cponnexion ********************************
             self.dlg.boutonVAdresse.clicked.connect(self.load_csv_Adresse)
             self.dlg.boutonVBM.clicked.connect(self.load_shapefile_BM)
-            self.dlg.boutonVResult.clicked.connect(self.create_shp_result)
+            self.dlg.boutonVResult.clicked.connect(self.create_shp_resultat)
 
             self.dlg.boutonLancement.clicked.connect(self.traitement)
 
@@ -261,14 +266,20 @@ class Camposphere:
     
     # ********************* Fonction qui créé un shapefile du nom choisi ************************
 
-    def create_shp_result(self):
-        nomSortie = self.dlg.lineResult.text()
+    def create_shp_resultat(self):
+        nomSortie = self.dlg.lineResult.text().replace(".shp", "")
 
-        self.result = shapefile.Writer(nomSortie)
-        self.result.field('premier','C','40')
-        self.result.field('second','C','40')
+        try:
+            with shapefile.Writer(nomSortie) as w:
+                w.field('premier', 'C', '40')
+                w.field('second', 'C', '40')
 
-        self.result.close()
+            self.resultat = nomSortie
+
+            QMessageBox.information(None, "Succès", "Shapefile créé avec succès.")
+
+        except Exception as e:
+            QMessageBox.critical(None, "Erreur", f"Erreur lors de la création : {str(e)}")
 
     # ********************* Fonction pour mettre à jour BM ************************
     
@@ -316,34 +327,9 @@ class Camposphere:
             QMessageBox.warning(None, "Chemin invalide", "Le fichier spécifié n'existe pas.")
             return False
 
-
-    # ********************* Fonction pour mettre à jour Result ************************
-    
-    def initialise_Result(self):
-        file_path = self.dlg.lineResult.text()
-        if os.path.exists(file_path):
-            try:
-                layer_name = os.path.splitext(os.path.basename(file_path))[0]
-                layer = QgsVectorLayer(file_path, layer_name, "ogr")
-
-                if not layer.isValid():
-                    raise Exception("La couche n'est pas valide.")
-
-                # Initialise la variable bm
-                self.result = layer
-                
-                return True  # Succès
-            except Exception as e:
-                QMessageBox.critical(None, "Erreur", f"Erreur lors de l'initialisation de la couche : {str(e)}")
-                return False
-        else:
-            QMessageBox.warning(None, "Chemin invalide", "Le fichier spécifié n'existe pas.")
-            return False
-
-
     # ********************* Fonction pour démarrer les traitements ************************
 
     def traitement(self):
         #faut que je vérifie si self. bm et self.adresse existent
         QMessageBox.information(None, "Echec du traitement ?", f"Le traitement est lancé mais pas sûr qu'il marche.")
-        processing.run("providerT:selectionBMCadastre", {'bm': self.bm ,'input_points': self.adresse ,'parcelles_cadastrales':"WFS://pagingEnabled='default' preferCoordinatesForWfsT11='false' restrictToRequestBBOX='1' srsname='EPSG:3857' typename='CADASTRALPARCELS.PARCELLAIRE_EXPRESS:parcelle' url='https://data.geopf.fr/wfs/' version='auto'",'Bm_adresse_selec':self.result})
+        processing.run("providerT:selectionBMCadastre", {'bm': self.bm ,'input_points': self.adresse ,'parcelles_cadastrales':"WFS://pagingEnabled='default' preferCoordinatesForWfsT11='false' restrictToRequestBBOX='1' srsname='EPSG:3857' typename='CADASTRALPARCELS.PARCELLAIRE_EXPRESS:parcelle' url='https://data.geopf.fr/wfs/' version='auto'",'Bm_adresse_selec':self.resultat})

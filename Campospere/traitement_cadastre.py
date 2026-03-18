@@ -5,6 +5,7 @@ from qgis.PyQt.QtWidgets import *
 from qgis.core import* # QgsVectorLayer,QgsRasterLayer, QgsProject, QgsField,QgsCoordinateTransform, QgsCoordinateReferenceSystem,QgsPointXY, QgsDistanceArea
 
 import processing
+import shapefile
 
 class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
 
@@ -26,25 +27,33 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
             'INPUT': parameters['parcelles_cadastrales'],
             'INTERSECT': parameters['input_points'],
             'PREDICATE': [1],  # contient
-            'OUTPUT': parameters['Parcelles_selec']
+            'OUTPUT': 'memory'
         }
         outputs['ExtraireParLocalisation'] = processing.run('native:extractbylocation', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
-        results['Parcelles_selec'] = outputs['ExtraireParLocalisation']['OUTPUT']
-        print("1er extraire par localisation passé")
 
         # Extraire par localisation
         alg_params = {
             'INPUT': parameters['bm'],
             'INTERSECT': outputs['ExtraireParLocalisation']['OUTPUT'],
             'PREDICATE': [6],  # est à l'intérieur
-            'OUTPUT': parameters['Bm_adresse_selec']
-        }
+            'OUTPUT': 'C:/temp/parcelles.shp'        }
         outputs['ExtraireParLocalisation'] = processing.run('native:extractbylocation', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
         results['Bm_adresse_selec'] = outputs['ExtraireParLocalisation']['OUTPUT']
-        print("2e extraire par localisation passé")
 
-        QgsProject.instance().addMapLayer(results['Bm_adresse_selec'])
+        r = shapefile.Reader('C:/temp/parcelles.shp')
 
+        w = shapefile.Writer("C:/temp/bmcada.shp")
+        w.fields = r.fields[1:] # skip first deletion field
+
+        # adding existing Shape objects
+        for shaperec in r.iterShapeRecords():
+            w.record(*shaperec.record)
+            w.shape(shaperec.shape)
+        
+        w.close()
+
+        layer = QgsVectorLayer("C:/temp/bmcada.shp", "bmcada", "ogr")
+        QgsProject.instance().addMapLayer(layer)
 
         feedback.setCurrentStep(1)
         if feedback.isCanceled():
