@@ -5,7 +5,6 @@ from qgis.PyQt.QtWidgets import *
 from qgis.core import* # QgsVectorLayer,QgsRasterLayer, QgsProject, QgsField,QgsCoordinateTransform, QgsCoordinateReferenceSystem,QgsPointXY, QgsDistanceArea
 
 import processing
-import shapefile
 
 class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
 
@@ -24,18 +23,12 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
         results = {}
         outputs = {}
 
-        # Créer un index spatial
-        alg_params = {
-            'INPUT': parameters['input_points']
-        }
-        outputs['CrerUnIndexSpatial'] = processing.run('native:createspatialindex', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
-
         # Extraire par localisation
         alg_params = {
             'INPUT': parameters['parcelles_cadastrales'],
-            'INTERSECT': outputs['CrerUnIndexSpatial']['OUTPUT'],
-            'PREDICATE': [1],  # contient
-            'OUTPUT': 'memory'
+            'INTERSECT': parameters['input_points'],
+            'PREDICATE': [0],  # intersecte
+            'OUTPUT': 'C:/temp/outputextraloca.shp'
         }
         outputs['ExtraireParLocalisation'] = processing.run('native:extractbylocation', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
 
