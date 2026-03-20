@@ -268,6 +268,8 @@ class Camposphere:
 
     def create_shp_resultat(self):
         nomSortie = self.dlg.lineResult.text().replace(".shp", "")
+        QMessageBox.information(None, "Test", f"non du fichier.{str(nomSortie)}")
+
 
         try:
             with shapefile.Writer(nomSortie) as w:
@@ -276,7 +278,7 @@ class Camposphere:
 
             self.resultat = nomSortie
 
-            QMessageBox.information(None, "Succès", "Shapefile créé avec succès.")
+            QMessageBox.information(None, "Succès", f"Shapefile créé avec succès.{str(nomSortie)}")
 
         except Exception as e:
             QMessageBox.critical(None, "Erreur", f"Erreur lors de la création : {str(e)}")
@@ -298,7 +300,7 @@ class Camposphere:
                 
                 return True  # Succès
             except Exception as e:
-                QMessageBox.critical(None, "Erreur", f"Erreur lors de l'initialisation de la couche : {str(e)}")
+                QMessageBox.information(self.dlg, "Erreur", f"Erreur lors de l'initialisation de la couche : {str(e)}")
                 return False
         else:
             QMessageBox.warning(None, "Chemin invalide", "Le fichier spécifié n'existe pas.")
