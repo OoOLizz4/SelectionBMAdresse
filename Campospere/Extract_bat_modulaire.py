@@ -333,5 +333,5 @@ class Camposphere:
 
     def traitement(self):
         #faut que je vérifie si self. bm et self.adresse existent
-        QMessageBox.information(None, "Echec du traitement ?", f"Le traitement est lancé mais pas sûr qu'il marche.")
-        processing.run("providerT:selectionBMCadastre", {'bm': self.bm ,'input_points': self.adresse ,'parcelles_cadastrales':"WFS://pagingEnabled='default' preferCoordinatesForWfsT11='false' restrictToRequestBBOX='1' srsname='EPSG:3857' typename='CADASTRALPARCELS.PARCELLAIRE_EXPRESS:parcelle' url='https://data.geopf.fr/wfs/' version='auto'",'Bm_adresse_selec':self.resultat})
+        QMessageBox.information(None, "Traitement lancé", f"Le traitement est lancé, il marche partiellement.")
+        processing.run("providerT:selectionBMCadastre", {'bm': self.bm ,'input_points': self.adresse ,'parcelles_cadastrales':"WFS://pagingEnabled='default' preferCoordinatesForWfsT11='false' restrictToRequestBBOX='1' srsname='EPSG:2154' typename='CADASTRALPARCELS.PARCELLAIRE_EXPRESS:parcelle' url='https://data.geopf.fr/wfs/' version='auto'", 'nom_sortie': self.resultat, 'Bm_adresse_selec':self.resultat})

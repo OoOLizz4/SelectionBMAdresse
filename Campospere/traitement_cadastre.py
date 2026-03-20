@@ -13,7 +13,9 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
         self.addParameter(QgsProcessingParameterVectorLayer('bm', 'BM', types=[QgsProcessing.TypeVectorPolygon], defaultValue=None))
         self.addParameter(QgsProcessingParameterVectorLayer('input_points', 'INPUT_POINTS', types=[QgsProcessing.TypeVectorPoint], defaultValue=None))
         self.addParameter(QgsProcessingParameterVectorLayer('parcelles_cadastrales', 'PARCELLES_CADASTRALES', types=[QgsProcessing.TypeVectorPolygon], defaultValue=None))        
+        self.addParameter(QgsProcessingParameterString('nom_sortie', 'nom_sortie', multiLine=False, defaultValue='bmselec'))
         self.addParameter(QgsProcessingParameterFeatureSink('Bm_adresse_selec', 'BM_Adresse_Selec', type=QgsProcessing.TypeVectorAnyGeometry, createByDefault=True, defaultValue=None))
+
 
     def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
@@ -40,19 +42,7 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
         outputs['ExtraireParLocalisation'] = processing.run('native:extractbylocation', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
         results['Bm_adresse_selec'] = outputs['ExtraireParLocalisation']['OUTPUT']
 
-        r = shapefile.Reader('C:/temp/parcelles.shp')
-
-        w = shapefile.Writer("C:/temp/bmcada.shp")
-        w.fields = r.fields[1:] # skip first deletion field
-
-        # adding existing Shape objects
-        for shaperec in r.iterShapeRecords():
-            w.record(*shaperec.record)
-            w.shape(shaperec.shape)
-        
-        w.close()
-
-        layer = QgsVectorLayer("C:/temp/bmcada.shp", "bmcada", "ogr")
+        layer = QgsVectorLayer("C:/temp/parcelles.shp", "bmcada", "ogr")
         QgsProject.instance().addMapLayer(layer)
 
         feedback.setCurrentStep(1)
