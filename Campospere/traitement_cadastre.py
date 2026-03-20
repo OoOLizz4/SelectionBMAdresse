@@ -24,26 +24,35 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
         results = {}
         outputs = {}
 
+        # Créer un index spatial
+        alg_params = {
+            'INPUT': parameters['input_points']
+        }
+        outputs['CrerUnIndexSpatial'] = processing.run('native:createspatialindex', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+
         # Extraire par localisation
         alg_params = {
             'INPUT': parameters['parcelles_cadastrales'],
-            'INTERSECT': parameters['input_points'],
+            'INTERSECT': outputs['CrerUnIndexSpatial']['OUTPUT'],
             'PREDICATE': [1],  # contient
             'OUTPUT': 'memory'
         }
         outputs['ExtraireParLocalisation'] = processing.run('native:extractbylocation', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+
+        cheminSortie = "C:/temp/"+parameters['nom_sortie']+".shp"
 
         # Extraire par localisation
         alg_params = {
             'INPUT': parameters['bm'],
             'INTERSECT': outputs['ExtraireParLocalisation']['OUTPUT'],
             'PREDICATE': [6],  # est à l'intérieur
-            'OUTPUT': 'C:/temp/parcelles.shp'        }
+            'OUTPUT': cheminSortie      }
         outputs['ExtraireParLocalisation'] = processing.run('native:extractbylocation', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
         results['Bm_adresse_selec'] = outputs['ExtraireParLocalisation']['OUTPUT']
 
-        layer = QgsVectorLayer("C:/temp/parcelles.shp", "bmcada", "ogr")
-        QgsProject.instance().addMapLayer(layer)
+        coucheSortie = QgsVectorLayer(cheminSortie, parameters['nom_sortie'], "ogr")
+
+        QgsProject.instance().addMapLayer(coucheSortie)
 
         feedback.setCurrentStep(1)
         if feedback.isCanceled():

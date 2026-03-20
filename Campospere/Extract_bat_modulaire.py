@@ -268,20 +268,9 @@ class Camposphere:
 
     def create_shp_resultat(self):
         nomSortie = self.dlg.lineResult.text().replace(".shp", "")
-        QMessageBox.information(None, "Test", f"non du fichier.{str(nomSortie)}")
+        QMessageBox.information(None, "Choix du nom", f"Le nom du fichier temporaire en sortie sera : {str(nomSortie)}")
 
-
-        try:
-            with shapefile.Writer(nomSortie) as w:
-                w.field('premier', 'C', '40')
-                w.field('second', 'C', '40')
-
-            self.resultat = nomSortie
-
-            QMessageBox.information(None, "Succès", f"Shapefile créé avec succès.{str(nomSortie)}")
-
-        except Exception as e:
-            QMessageBox.critical(None, "Erreur", f"Erreur lors de la création : {str(e)}")
+        self.nomSortie = nomSortie
 
     # ********************* Fonction pour mettre à jour BM ************************
     
@@ -332,6 +321,13 @@ class Camposphere:
     # ********************* Fonction pour démarrer les traitements ************************
 
     def traitement(self):
-        #faut que je vérifie si self. bm et self.adresse existent
-        QMessageBox.information(None, "Traitement lancé", f"Le traitement est lancé, il marche partiellement.")
-        processing.run("providerT:selectionBMCadastre", {'bm': self.bm ,'input_points': self.adresse ,'parcelles_cadastrales':"WFS://pagingEnabled='default' preferCoordinatesForWfsT11='false' restrictToRequestBBOX='1' srsname='EPSG:2154' typename='CADASTRALPARCELS.PARCELLAIRE_EXPRESS:parcelle' url='https://data.geopf.fr/wfs/' version='auto'", 'nom_sortie': self.resultat, 'Bm_adresse_selec':self.resultat})
+        QMessageBox.information(None, "Bouton pressé", f":P")
+
+        try :
+            processing.run("providerT:selectionBMCadastre", {'bm': self.bm ,'input_points': self.adresse ,'parcelles_cadastrales':"WFS://pagingEnabled='default' preferCoordinatesForWfsT11='false' restrictToRequestBBOX='1' srsname='EPSG:2154' typename='CADASTRALPARCELS.PARCELLAIRE_EXPRESS:parcelle' url='https://data.geopf.fr/wfs/' version='auto'", 'nom_sortie': self.nomSortie, 'Bm_adresse_selec':'TEMPORARY_OUTPUT'})
+            QMessageBox.information(None, "Traitement lancé", f"Le traitement est lancé, il marche partiellement.")
+
+            return True
+        except Exception as e:
+            QMessageBox.warning(None, "Fichiers absents", "Aucun fichiers sur lesquels réaliser le traitement.")
+            return False
