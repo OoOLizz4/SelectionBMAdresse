@@ -23,17 +23,25 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
         results = {}
         outputs = {}
 
+        feedback.setCurrentStep(1)
+        if feedback.isCanceled():
+            return {}
+
         # Extraire par localisation
         alg_params = {
             'INPUT': parameters['parcelles_cadastrales'],
             'INTERSECT': parameters['input_points'],
             'PREDICATE': [0],  # intersecte
-            'OUTPUT': 'C:/temp/outputextraloca.shp'
+            'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
         }
         outputs['ExtraireParLocalisation'] = processing.run('native:extractbylocation', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
 
         cheminSortie = "C:/temp/"+parameters['nom_sortie']+".shp"
 
+        feedback.setCurrentStep(1)
+        if feedback.isCanceled():
+            return {}
+        
         # Extraire par localisation
         alg_params = {
             'INPUT': parameters['bm'],
@@ -47,10 +55,6 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
 
         QgsProject.instance().addMapLayer(coucheSortie)
 
-        feedback.setCurrentStep(1)
-        if feedback.isCanceled():
-            return {}
-        
         return results
     
     def name(self):

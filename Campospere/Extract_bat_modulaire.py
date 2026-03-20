@@ -321,11 +321,39 @@ class Camposphere:
     # ********************* Fonction pour démarrer les traitements ************************
 
     def traitement(self):
-        QMessageBox.information(None, "Bouton pressé", f":P")
+        QMessageBox.information(None, "Bouton pressé", f"o.O")
 
         try :
 
-            processing.run("providerT:selectionBMCadastre", {'bm': self.bm ,'input_points': self.adresse ,'parcelles_cadastrales':"WFS://pagingEnabled='default' preferCoordinatesForWfsT11='false' restrictToRequestBBOX='1' srsname='EPSG:2154' typename='CADASTRALPARCELS.PARCELLAIRE_EXPRESS:parcelle' url='https://data.geopf.fr/wfs/' version='auto'", 'nom_sortie': self.nomSortie, 'Bm_adresse_selec':'TEMPORARY_OUTPUT'})
+            # 1. On récupère l'emprise (Bounding Box) de vos points d'adresse
+            # Cela permet au WFS de savoir EXACTEMENT quelle zone télécharger
+            extent = self.adresse.extent()
+            xmin, xmax, ymin, ymax = extent.xMinimum(), extent.xMaximum(), extent.yMinimum(), extent.yMaximum()
+            bbox_str = f"{xmin},{ymin},{xmax},{ymax},EPSG:2154"
+
+            # 2. On construit l'URL WFS avec le filtre BBOX intégré
+            url_cadastre = (
+                "WFS:https://data.geopf.fr/wfs/?"
+                "SERVICE=WFS&VERSION=2.0.0&REQUEST=GetFeature&"
+                "TYPENAME=CADASTRALPARCELS.PARCELLAIRE_EXPRESS:parcelle&"
+                f"BBOX={bbox_str}&SRSNAME=EPSG:2154"
+            )
+
+            # 3. On charge cette couche en mémoire pour être sûr qu'elle soit "prête"
+            vlayer_cadastre = QgsVectorLayer(url_cadastre, "cadastre_temp", "WFS")
+            
+            if not vlayer_cadastre.isValid():
+                raise Exception("Impossible de contacter le serveur WFS du Géoportail.")
+
+            # 4. On lance l'algorithme avec la couche déjà chargée
+            processing.run("providerT:selectionBMCadastre", {
+                'bm': self.bm,
+                'input_points': self.adresse,
+                'parcelles_cadastrales': vlayer_cadastre, # On passe l'objet couche, pas l'URL
+                'nom_sortie': self.nomSortie,
+                'Bm_adresse_selec': 'TEMPORARY_OUTPUT'
+            })
+
             QMessageBox.information(None, "Traitement lancé", f"Le traitement est lancé, il marche partiellement.")
 
             return True
