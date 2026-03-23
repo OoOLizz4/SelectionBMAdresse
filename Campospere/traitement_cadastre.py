@@ -75,10 +75,12 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
         QgsProject.instance().addMapLayer(coucheSortie)
 
         # Chargement du style customisé
-        style_path = os.path.join(self.plugin_dir, 'styleCouches', 'style_resultat.qml')
-        layerSty = self.iface.activeLayer()
-        layerSty.loadNamedStyle(style_path)
-        layerSty.triggerRepaint()
+        plugin_dir = os.path.dirname(__file__)
+
+        style_path = os.path.join(plugin_dir, 'styleCouches', 'style_resultat.qml')
+
+        coucheSortie.loadNamedStyle(style_path)
+        coucheSortie.triggerRepaint()
 
         return results
     
