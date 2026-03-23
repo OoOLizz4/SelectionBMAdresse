@@ -277,7 +277,7 @@ class Camposphere:
             file_paths = file_dialog.selectedFiles()
             if file_paths:
                 file_path = file_paths[0]
-                self.dlg.lineAdresse.setText(file_path)  # Mets à jour l'UI
+                self.dlg.lineCadastre.setText(file_path)  # Mets à jour l'UI
                 if self.initialise_Cadastre():  # Appelle la nouvelle fonction
                     QgsProject.instance().addMapLayer(self.adresse)
                     QMessageBox.information(None, "Chargement réussi", f"Fichier chargé avec {self.adresse.featureCount()} objets géométriques.")
@@ -340,7 +340,7 @@ class Camposphere:
     # ********************* Fonction pour mettre à jour Cadastre ************************
     
     def initialise_Cadastre(self):
-        file_path = self.dlg.lineAdresse.text()
+        file_path = self.dlg.lineCadastre.text()
         if os.path.exists(file_path):
             try:
                 layer_name = os.path.splitext(os.path.basename(file_path))[0]
@@ -363,7 +363,7 @@ class Camposphere:
     # ********************* Fonction pour démarrer les traitements ************************
 
     def traitement(self):
-        QMessageBox.information(None, "Bouton pressé", f":P")
+        QMessageBox.information(None, "Bouton pressé", f"o.O")
 
         try :
             #y'a des problèmes lors du chargement du WFS, j'essaie de régler ça plus tard.
