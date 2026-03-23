@@ -279,7 +279,7 @@ class Camposphere:
                 file_path = file_paths[0]
                 self.dlg.lineCadastre.setText(file_path)  # Mets à jour l'UI
                 if self.initialise_Cadastre():  # Appelle la nouvelle fonction
-                    QgsProject.instance().addMapLayer(self.adresse)
+                    QgsProject.instance().addMapLayer(self.cadastre)
                     QMessageBox.information(None, "Chargement réussi", f"Fichier chargé avec {self.adresse.featureCount()} objets géométriques.")
 
     
@@ -350,7 +350,7 @@ class Camposphere:
                     raise Exception("La couche n'est pas valide.")
 
                 # Initialise la variable adresse
-                self.adresse = layer
+                self.cadastre = layer
                 
                 return True  # Succès
             except Exception as e:
@@ -367,7 +367,7 @@ class Camposphere:
 
         try :
             #y'a des problèmes lors du chargement du WFS, j'essaie de régler ça plus tard.
-            processing.run("providerT:selectionBMCadastre", {'bm': self.bm ,'input_points': self.adresse ,'parcelles_cadastrales':"WFS://pagingEnabled='default' preferCoordinatesForWfsT11='false' restrictToRequestBBOX='1' srsname='EPSG:2154' typename='CADASTRALPARCELS.PARCELLAIRE_EXPRESS:parcelle' url='https://data.geopf.fr/wfs/' version='auto'", 'nom_sortie': self.nomSortie, 'Bm_adresse_selec':'TEMPORARY_OUTPUT'})
+            processing.run("providerT:selectionBMCadastre", {'bm': self.bm ,'input_points': self.adresse ,'parcelles_cadastrales':self.cadastre, 'nom_sortie': self.nomSortie, 'Bm_adresse_selec':'TEMPORARY_OUTPUT'})
             QMessageBox.information(None, "Traitement lancé", f"Le traitement est lancé, il marche partiellement.")
 
             return True
