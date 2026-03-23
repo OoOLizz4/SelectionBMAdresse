@@ -10,7 +10,7 @@ version=0.1
 author=Lisa Verrier & Daouda Timera
 email=lisa.verrier04@gmail.com, timeradaouda5@gmail.com
 
-about= Input : un csv contenant des coordonnées + une couche contenant des polygones de bâtiments modulaires
+about= Input : un shapefile de points d'adresse + une couche contenant des polygones de bâtiments modulaires + une couche contenant les parcelles cadastrales du département dans lequel on se situe
 Output : une couche de polygone contenant les bâtiments modulaires aux adresses demandées
 
 tracker=http://bugs

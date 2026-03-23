@@ -1,14 +1,28 @@
-from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, QVariant
-from qgis.PyQt.QtGui import QIcon
+#Modules nécéssaires à l'affichage de l'interface
 from qgis.PyQt.QtWidgets import *
 
-from qgis.core import* # QgsVectorLayer,QgsRasterLayer, QgsProject, QgsField,QgsCoordinateTransform, QgsCoordinateReferenceSystem,QgsPointXY, QgsDistanceArea
-
+#Modules nécéssaires à pour faire tourner le traitement vectoriel
+from qgis.core import *
 import processing
 
 class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
 
+    """
+    Le traitement qui permet d'avoir la séléction des bâtiments modulaires selon une liste de point de coordonnées.
+    Il est construit à partir du ModelBuilder de QGis.
+    Il est lancé dans extract_bat_modulaire.py : Camposhere.traitement().
+    Entrée :
+        bm: Une couche .shp de polygone qui représente les bâtiments modulaires
+        input_points: Une couche .shp qui représente les points de coordonnées des adresses
+        parcelles_cadastrales: Une couche .shp qui représente les parcelles cadastrales du département qui nous intérèsse.
+        nom_sortie: 
+
+    Sortie : 
+        Bm_adresse_selec: Une couche .shp qui représente les bâtiments modulaires séléctionnés en fonction des points d'adresse et des parcelles cadastrales.
+    """
+
     def initAlgorithm(self, config=None):
+        """Initialisation des paramètres"""
         self.addParameter(QgsProcessingParameterVectorLayer('bm', 'BM', types=[QgsProcessing.TypeVectorPolygon], defaultValue=None))
         self.addParameter(QgsProcessingParameterVectorLayer('input_points', 'INPUT_POINTS', types=[QgsProcessing.TypeVectorPoint], defaultValue=None))
         self.addParameter(QgsProcessingParameterVectorLayer('parcelles_cadastrales', 'PARCELLES_CADASTRALES', types=[QgsProcessing.TypeVectorPolygon], defaultValue=None))        
@@ -17,6 +31,7 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
 
 
     def processAlgorithm(self, parameters, context, model_feedback):
+        """Traitement"""
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
         # overall progress through the model
         feedback = QgsProcessingMultiStepFeedback(2, model_feedback)
@@ -27,7 +42,7 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
         if feedback.isCanceled():
             return {}
 
-        # Extraire par localisation
+        # Extraire par localisation : on choisit les parcelles dans lesquelles il y a des points
         alg_params = {
             'INPUT': parameters['parcelles_cadastrales'],
             'INTERSECT': parameters['input_points'],
@@ -42,7 +57,7 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
         if feedback.isCanceled():
             return {}
         
-        # Extraire par localisation
+        # Extraire par localisation : on choisit les bâtiments modulaires qui sont dans les parcelles choisies plus tôt
         alg_params = {
             'INPUT': parameters['bm'],
             'INTERSECT': outputs['ExtraireParLocalisation']['OUTPUT'],
@@ -51,8 +66,8 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
         outputs['ExtraireParLocalisation'] = processing.run('native:extractbylocation', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
         results['Bm_adresse_selec'] = outputs['ExtraireParLocalisation']['OUTPUT']
 
+        # Transformation du résultat en couche QGis et affichage de celle-ci
         coucheSortie = QgsVectorLayer(cheminSortie, parameters['nom_sortie'], "ogr")
-
         QgsProject.instance().addMapLayer(coucheSortie)
 
         return results
