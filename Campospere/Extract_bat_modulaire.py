@@ -215,6 +215,7 @@ class Camposphere:
          # ******************** création de signal de cponnexion ********************************
             self.dlg.boutonVAdresse.clicked.connect(self.load_csv_Adresse)
             self.dlg.boutonVBM.clicked.connect(self.load_shapefile_BM)
+            self.dlg.boutonVCadastre.clicked.connect(self.load_shp_cadastre)
             self.dlg.boutonVResult.clicked.connect(self.create_nom_resultat)
 
             self.dlg.boutonLancement.clicked.connect(self.traitement)
@@ -263,6 +264,24 @@ class Camposphere:
                 if self.initialise_Adresse():  # Appelle la nouvelle fonction
                     QgsProject.instance().addMapLayer(self.adresse)
                     QMessageBox.information(None, "Chargement réussi", f"Fichier chargé avec {self.adresse.featureCount()} objets géométriques.")
+
+    # ********************* Fonction pour charger un shp lorsque le boutonVCadastre est cliqué ************************
+
+    def load_shp_Cadastre(self):
+        file_dialog = QFileDialog()
+        file_dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
+        file_dialog.setNameFilter("Shapefiles (*.shp)")
+        file_dialog.setViewMode(QFileDialog.ViewMode.List)
+
+        if file_dialog.exec():
+            file_paths = file_dialog.selectedFiles()
+            if file_paths:
+                file_path = file_paths[0]
+                self.dlg.lineAdresse.setText(file_path)  # Mets à jour l'UI
+                if self.initialise_Cadastre():  # Appelle la nouvelle fonction
+                    QgsProject.instance().addMapLayer(self.adresse)
+                    QMessageBox.information(None, "Chargement réussi", f"Fichier chargé avec {self.adresse.featureCount()} objets géométriques.")
+
     
     # ********************* Fonction qui créé un shapefile du nom choisi ************************
 
@@ -318,86 +337,40 @@ class Camposphere:
             QMessageBox.warning(None, "Chemin invalide", "Le fichier spécifié n'existe pas.")
             return False
 
+    # ********************* Fonction pour mettre à jour Cadastre ************************
+    
+    def initialise_Cadastre(self):
+        file_path = self.dlg.lineAdresse.text()
+        if os.path.exists(file_path):
+            try:
+                layer_name = os.path.splitext(os.path.basename(file_path))[0]
+                layer = QgsVectorLayer(file_path, layer_name, "ogr")
+
+                if not layer.isValid():
+                    raise Exception("La couche n'est pas valide.")
+
+                # Initialise la variable adresse
+                self.adresse = layer
+                
+                return True  # Succès
+            except Exception as e:
+                QMessageBox.critical(None, "Erreur", f"Erreur lors de l'initialisation de la couche : {str(e)}")
+                return False
+        else:
+            QMessageBox.warning(None, "Chemin invalide", "Le fichier spécifié n'existe pas.")
+            return False
+
     # ********************* Fonction pour démarrer les traitements ************************
 
     def traitement(self):
-        QMessageBox.information(None, "Bouton pressé", f"o.O")
+        QMessageBox.information(None, "Bouton pressé", f":P")
 
         try :
-            
-            # 1. Calcul de l'emprise (BBOX)
-            ext = self.adresse.extent()
-            # On ajoute une petite marge de 50m pour être sûr de ne rien rater sur les bords
-            xmin, ymin, xmax, ymax = ext.xMinimum()-10, ext.yMinimum()-10, ext.xMaximum()+10, ext.yMaximum()+10
-          # Construction Propre de l'URI WFS
-            uri = (
-                "pagingEnabled='true' "
-                "restrictToRequestBBOX='1' "
-                "srsname='EPSG:2154' "
-                "typename='CADASTRALPARCELS.PARCELLAIRE_EXPRESS:parcelle' "
-                "url='https://data.geopf.fr/wfs/' "
-                "version='2.0.0' "
-                f"bbox='{xmin},{ymin},{xmax},{ymax},EPSG:2154'"
-            )  
+            #y'a des problèmes lors du chargement du WFS, j'essaie de régler ça plus tard.
+            processing.run("providerT:selectionBMCadastre", {'bm': self.bm ,'input_points': self.adresse ,'parcelles_cadastrales':"WFS://pagingEnabled='default' preferCoordinatesForWfsT11='false' restrictToRequestBBOX='1' srsname='EPSG:2154' typename='CADASTRALPARCELS.PARCELLAIRE_EXPRESS:parcelle' url='https://data.geopf.fr/wfs/' version='auto'", 'nom_sortie': self.nomSortie, 'Bm_adresse_selec':'TEMPORARY_OUTPUT'})
+            QMessageBox.information(None, "Traitement lancé", f"Le traitement est lancé, il marche partiellement.")
 
-            # 3. ÉTAPE CLÉ : On télécharge d'abord vers la mémoire vive (Memory Layer)
-            # On utilise native:savefeatures pour "figer" les données WFS dans la RAM
-            feedback = QgsProcessingFeedback()
-            
-            # On transforme le flux WFS instable en une couche de polygones stable en RAM
-            cadastre_fixe = processing.run("native:savefeatures", {
-                'INPUT': uri,
-                'OUTPUT': 'memory:cadastre_stable'
-            }, feedback=feedback)['OUTPUT']
-
-            # 4. On lance votre algorithme sur la couche STABLE
-            params = {
-                'bm': self.bm,
-                'input_points': self.adresse,
-                'parcelles_cadastrales': cadastre_fixe,
-                'nom_sortie': self.nomSortie,
-                'Bm_adresse_selec': 'TEMPORARY_OUTPUT'
-            }
-            
-            processing.run("providerT:selectionBMCadastre", params)
-            
-            QMessageBox.information(None, "Succès", "Traitement terminé !")
             return True
-
-            # #Emprise des points
-            # rect = self.adresse.extent()
-            # bbox_str = f"{rect.xMinimum()},{rect.yMinimum()},{rect.xMaximum()},{rect.yMaximum()}"
-
-            # # Construction Propre de l'URI WFS
-            # uri = QgsDataSourceUri()
-            # uri.setParam("url", "https://data.geopf.fr/wfs/")
-            # uri.setParam("typename", "CADASTRALPARCELS.PARCELLAIRE_EXPRESS:parcelle")
-            # uri.setParam("srsname", "EPSG:2154")
-            # uri.setParam("bbox", bbox_str) # On filtre ici pour gagner du temps
-            # uri.setParam("version", "2.0.0")
-            # uri.setParam("pagingEnabled", "true")
-
-            # uri_string = uri.uri()
-
-            # feedback = QgsProcessingFeedback()
-            # #Chargement du WFS en mémoire
-            # vlayer_cadastre = QgsVectorLayer(uri_string, "cadastre_temp", "WFS")
-            
-            # if not vlayer_cadastre.isValid():
-            #     raise Exception("Impossible de contacter le serveur WFS du Géoportail.")
-
-            # # lancement de l'algorithme
-            # processing.run("providerT:selectionBMCadastre", {
-            #     'bm': self.bm,
-            #     'input_points': self.adresse,
-            #     'parcelles_cadastrales': vlayer_cadastre, # On passe l'objet couche, pas l'URL
-            #     'nom_sortie': self.nomSortie,
-            #     'Bm_adresse_selec': 'TEMPORARY_OUTPUT'
-            # })
-
-            # QMessageBox.information(None, "Traitement lancé", f"Le traitement est lancé, il marche partiellement.")
-
-            # return True
         except Exception as e:
             QMessageBox.warning(None, "Erreur", f"Une erreur à eu lieu. Ajoutez des fichiers ou consultez la console. {str(e)}")
             return False

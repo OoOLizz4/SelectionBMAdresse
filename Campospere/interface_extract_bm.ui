@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>737</width>
-    <height>289</height>
+    <height>362</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>0</x>
      <y>0</y>
      <width>729</width>
-     <height>271</height>
+     <height>351</height>
     </rect>
    </property>
    <widget class="QWidget" name="gridLayoutWidget">
@@ -28,17 +28,10 @@
       <x>9</x>
       <y>10</y>
       <width>716</width>
-      <height>251</height>
+      <height>331</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="8" column="1">
-      <widget class="QPushButton" name="boutonLancement">
-       <property name="text">
-        <string>Lancer le traitement</string>
-       </property>
-      </widget>
-     </item>
      <item row="1" column="2">
       <widget class="QPushButton" name="boutonVAdresse">
        <property name="text">
@@ -46,23 +39,10 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
-      <widget class="QLineEdit" name="lineBM"/>
-     </item>
-     <item row="1" column="1">
-      <widget class="QLineEdit" name="lineAdresse"/>
-     </item>
-     <item row="6" column="1">
-      <widget class="QLabel" name="label_6">
+     <item row="10" column="1">
+      <widget class="QPushButton" name="boutonLancement">
        <property name="text">
-        <string>Choix du nom :</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string>Fichier en sortie :</string>
+        <string>Lancer le traitement</string>
        </property>
       </widget>
      </item>
@@ -73,9 +53,6 @@
        </property>
       </widget>
      </item>
-     <item row="7" column="1">
-      <widget class="QLineEdit" name="lineResult"/>
-     </item>
      <item row="2" column="1">
       <widget class="QLabel" name="label_3">
        <property name="text">
@@ -83,24 +60,13 @@
        </property>
       </widget>
      </item>
+     <item row="9" column="1">
+      <widget class="QLineEdit" name="lineResult"/>
+     </item>
      <item row="0" column="1">
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>CSV avec coordonnées ou adresses:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Bâtiments modulaires correspondant aux adresses.</string>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="2">
-      <widget class="QPushButton" name="boutonVResult">
-       <property name="text">
-        <string>Valider le nom</string>
+        <string>Shapefile avec les adresses:</string>
        </property>
       </widget>
      </item>
@@ -111,10 +77,61 @@
        </property>
       </widget>
      </item>
-     <item row="5" column="1">
+     <item row="9" column="2">
+      <widget class="QPushButton" name="boutonVResult">
+       <property name="text">
+        <string>Valider le nom</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="1">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Bâtiments modulaires correspondant aux adresses.</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="lineAdresse"/>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="lineBM"/>
+     </item>
+     <item row="6" column="0">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Fichier en sortie :</string>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="1">
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>Choix du nom :</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLabel" name="label_8">
+       <property name="text">
+        <string>Parcelles cadastrales du département : </string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="1">
       <widget class="QLabel" name="label_7">
        <property name="text">
         <string>Il s'agit d'un fichier temporaire qui s'affichera comme couche dans QGis. Ne pas oublier de valider le nom !</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QLineEdit" name="lineCadastre"/>
+     </item>
+     <item row="5" column="2">
+      <widget class="QPushButton" name="boutonVCadastre">
+       <property name="text">
+        <string>Accéder aux fichiers</string>
        </property>
       </widget>
      </item>
