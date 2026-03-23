@@ -179,7 +179,7 @@ class Camposphere:
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
         self.provider = ProviderTraitement()
         QgsApplication.processingRegistry().addProvider(self.provider)
-        icon_path = ':SelecBMAdresse/Camposphere/icon.png'
+        icon_path = os.path.join(self.plugin_dir, 'icon.png')
         self.add_action(
             icon_path,
             text=self.tr(u'Séléction des BM'),
@@ -363,7 +363,7 @@ class Camposphere:
         try :
             #y'a des problèmes lors du chargement du WFS, j'essaie de régler ça plus tard.
             processing.run("providerT:selectionBMCadastre", {'bm': self.bm ,'input_points': self.adresse ,'parcelles_cadastrales':self.cadastre, 'nom_sortie': self.nomSortie, 'Bm_adresse_selec':'TEMPORARY_OUTPUT'})
-            QMessageBox.information(None, "Traitement lancé", f"Le traitement est lancé, il marche partiellement.")
+            QMessageBox.information(None, "Traitement fini.", f"Le traitement est terminé.")
 
             return True
         except Exception as e:
