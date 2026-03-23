@@ -215,7 +215,7 @@ class Camposphere:
          # ******************** création de signal de cponnexion ********************************
             self.dlg.boutonVAdresse.clicked.connect(self.load_csv_Adresse)
             self.dlg.boutonVBM.clicked.connect(self.load_shapefile_BM)
-            self.dlg.boutonVCadastre.clicked.connect(self.load_shp_cadastre)
+            self.dlg.boutonVCadastre.clicked.connect(self.load_shp_Cadastre)
             self.dlg.boutonVResult.clicked.connect(self.create_nom_resultat)
 
             self.dlg.boutonLancement.clicked.connect(self.traitement)
