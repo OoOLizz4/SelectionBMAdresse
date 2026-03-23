@@ -5,6 +5,10 @@ from qgis.PyQt.QtWidgets import *
 from qgis.core import *
 import processing
 
+#Module pour naviguer plus facilement dans les fichiers
+import os.path
+
+
 class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
 
     """
@@ -69,6 +73,12 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
         # Transformation du résultat en couche QGis et affichage de celle-ci
         coucheSortie = QgsVectorLayer(cheminSortie, parameters['nom_sortie'], "ogr")
         QgsProject.instance().addMapLayer(coucheSortie)
+
+        # Chargement du style customisé
+        style_path = os.path.join(self.plugin_dir, 'styleCouches', 'style_resultat.qml')
+        layerSty = self.iface.activeLayer()
+        layerSty.loadNamedStyle(style_path)
+        layerSty.triggerRepaint()
 
         return results
     

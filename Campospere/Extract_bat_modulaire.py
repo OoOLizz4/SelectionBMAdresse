@@ -182,7 +182,7 @@ class Camposphere:
         icon_path = os.path.join(self.plugin_dir, 'icon.png')
         self.add_action(
             icon_path,
-            text=self.tr(u'Séléction des BM'),
+            text=self.tr(u'Bâtiments modulaires selon adresse'),
             callback=self.run,
             parent=self.iface.mainWindow())
 
@@ -241,6 +241,13 @@ class Camposphere:
                 self.dlg.lineBM.setText(file_path)  # Mets à jour l'UI
                 if self.initialise_BM():  # Appelle la nouvelle fonction
                     QgsProject.instance().addMapLayer(self.bm)
+
+                    # Chargement du style customisé
+                    style_path = os.path.join(self.plugin_dir, 'styleCouches', 'style_bm.qml')
+                    layerSty = self.iface.activeLayer()
+                    layerSty.loadNamedStyle(style_path)
+                    layerSty.triggerRepaint()
+
                     QMessageBox.information(None, "Chargement réussi", f"Fichier chargé avec {self.bm.featureCount()} objets géométriques.")
 
     # ********************* Fonction pour charger un csv lorsque le boutonVAdresse est cliqué ************************
@@ -258,6 +265,13 @@ class Camposphere:
                 self.dlg.lineAdresse.setText(file_path)  # Mets à jour l'UI
                 if self.initialise_Adresse():  # Appelle la nouvelle fonction
                     QgsProject.instance().addMapLayer(self.adresse)
+
+                    # Chargement du style customisé
+                    style_path = os.path.join(self.plugin_dir, 'styleCouches', 'style_points.qml')
+                    layerSty = self.iface.activeLayer()
+                    layerSty.loadNamedStyle(style_path)
+                    layerSty.triggerRepaint()
+
                     QMessageBox.information(None, "Chargement réussi", f"Fichier chargé avec {self.adresse.featureCount()} objets géométriques.")
 
     # ********************* Fonction pour charger un shp lorsque le boutonVCadastre est cliqué ************************
@@ -275,6 +289,13 @@ class Camposphere:
                 self.dlg.lineCadastre.setText(file_path)  # Mets à jour l'UI
                 if self.initialise_Cadastre():  # Appelle la nouvelle fonction
                     QgsProject.instance().addMapLayer(self.cadastre)
+
+                    # Chargement du style customisé
+                    style_path = os.path.join(self.plugin_dir, 'styleCouches', 'style_parcelles.qml')
+                    layerSty = self.iface.activeLayer()
+                    layerSty.loadNamedStyle(style_path)
+                    layerSty.triggerRepaint()
+
                     QMessageBox.information(None, "Chargement réussi", f"Fichier chargé avec {self.adresse.featureCount()} objets géométriques.")
 
     
