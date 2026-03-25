@@ -42,7 +42,24 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
         results = {}
         outputs = {}
 
-        feedback.setCurrentStep(1)
+        
+        #**************************# ← AJOUTER : reprojection des points en L93 ******************************
+        from qgis.core import QgsCoordinateReferenceSystem
+        couche_points = self.parameterAsVectorLayer(parameters, 'input_points', context)
+        crs_l93 = QgsCoordinateReferenceSystem("EPSG:2154")
+
+        if couche_points.crs() != crs_l93:
+            outputs['points_l93'] = processing.run(
+                'native:reprojectlayer',
+                {'INPUT': couche_points, 'TARGET_CRS': crs_l93, 'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT},
+                context=context, feedback=feedback, is_child_algorithm=True
+            )
+            points_pour_traitement = outputs['points_l93']['OUTPUT']
+        else:
+            points_pour_traitement = parameters['input_points']
+
+
+        feedback.setCurrentStep(0)
         if feedback.isCanceled():
             return {}
         
@@ -54,48 +71,31 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
         }
         outputs['RparerLesGomtries'] = processing.run('native:fixgeometries', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
 
+        #feedback.setCurrentStep(1)
         feedback.setCurrentStep(1)
         if feedback.isCanceled():
             return {}
 
-        # Créer un index spatial : je créée un index spatial pour le cadastre pour accélérer le traitement
-        alg_params = {
-            'INPUT': outputs['RparerLesGomtries']['OUTPUT']
-        }
-        outputs['CadastreIndex'] = processing.run('native:createspatialindex', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
-
-        feedback.setCurrentStep(1)
-        if feedback.isCanceled():
-            return {}
-        
-        # Créer un index spatial : je créée un index spatial pour le cadastre pour accélérer le traitement
-        alg_params = {
-            'INPUT': parameters['bm']
-        }
-        outputs['BMIndex'] = processing.run('native:createspatialindex', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
-
-        feedback.setCurrentStep(1)
-        if feedback.isCanceled():
-            return {}
 
         # Extraire par localisation : on choisit les parcelles dans lesquelles il y a des points
         alg_params = {
-            'INPUT': outputs['CadastreIndex']['OUTPUT'],
-            'INTERSECT': parameters['input_points'],
-            'PREDICATE': [0],  # intersecte
+            'INPUT': outputs['RparerLesGomtries']['OUTPUT'],
+            # 'INTERSECT': parameters 'input_points'],
+            'INTERSECT': points_pour_traitement,
+            'PREDICATE': [0, 5],  # 0 = intersecte, 5 = intérieur
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
         }
         outputs['ExtraireParLocalisation'] = processing.run('native:extractbylocation', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
 
-        feedback.setCurrentStep(1)
+        feedback.setCurrentStep(2)
         if feedback.isCanceled():
             return {}
         
         # Extraire par localisation : on choisit les bâtiments modulaires qui sont dans les parcelles choisies plus tôt
         alg_params = {
-            'INPUT': outputs['BMIndex']['OUTPUT'],
+            'INPUT': parameters['bm'],
             'INTERSECT': outputs['ExtraireParLocalisation']['OUTPUT'],
-            'PREDICATE': [0],  # intersecte
+            'PREDICATE': [6],  # est à l'intérieur
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT      
         }
         outputs['ExtraireParLocalisation'] = processing.run('native:extractbylocation', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
@@ -113,7 +113,7 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
         }
         outputs['JoindreLesAttributsParLocalisation'] = processing.run('native:joinattributesbylocation', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
 
-        feedback.setCurrentStep(2)
+        feedback.setCurrentStep(3)
         if feedback.isCanceled():
             return {}
 
@@ -126,7 +126,7 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
         }
         outputs['RenommerLeChamp'] = processing.run('native:renametablefield', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
 
-        feedback.setCurrentStep(3)
+        feedback.setCurrentStep(4)
         if feedback.isCanceled():
             return {}
         
