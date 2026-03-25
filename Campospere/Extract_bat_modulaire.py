@@ -201,7 +201,11 @@ class Camposphere:
                 action)
             self.iface.removeToolBarIcon(action)
         if self.provider:
-            QgsApplication.processingRegistry().removeProvider(self.provider)
+            try:
+                QgsApplication.processingRegistry().removeProvider(self.provider)
+            except RuntimeError:
+                pass
+            self.provider = None
 
 
     def run(self):
@@ -296,7 +300,6 @@ class Camposphere:
                     self.dlg.lineAdresse.setText(f"[GEOCODÉ] {layer.name()}")
 
 
-
     # ********************* Fonction pour charger un shp lorsque le boutonVCadastre est cliqué ************************
 
     def load_shp_Cadastre(self):
@@ -319,7 +322,7 @@ class Camposphere:
                     layerSty.loadNamedStyle(style_path)
                     layerSty.triggerRepaint()
 
-                    QMessageBox.information(None, "Chargement réussi", f"Fichier chargé avec {self.adresse.featureCount()} objets géométriques.")
+                    QMessageBox.information(None, "Chargement réussi", f"Fichier chargé avec {self.cadastre.featureCount()} objets géométriques.")
 
     
     # ********************* Fonction qui créé un shapefile du nom choisi ************************
@@ -403,24 +406,11 @@ class Camposphere:
 
     def traitement(self):
 
-# AJOUT : recuperer les couches choisies dans les combos
-        layer_id = self.dlg.comboAdresse.currentData()
-        if layer_id:
-            self.adresse = QgsProject.instance().mapLayer(layer_id)
-
-        layer_id = self.dlg.comboBM.currentData()
-        if layer_id:
-            self.bm = QgsProject.instance().mapLayer(layer_id)
-
-        layer_id = self.dlg.comboCadastre.currentData()
-        if layer_id:
-            self.cadastre = QgsProject.instance().mapLayer(layer_id)
-
-        QMessageBox.information(None, "Outil développement", f"._.")
+        QMessageBox.information(None, "Outil développement", f":P")
 
         try :
             
-            #y'a des problèmes lors du chargement du WFS, j'essaie de régler ça plus tard.
+            #Chargement du geocodage
             if self.bm is None or self.adresse is None or self.cadastre is None:
                 QMessageBox.warning(None, "Erreur", "Merci de charger les couches.")
                 return False
@@ -438,7 +428,7 @@ class Camposphere:
                 params_selection
             )
 
-            QMessageBox.information(None, "Traitement lancé", "Le traitement est terminé.")
+            QMessageBox.information(None, "Traitement fini.", "Le traitement est terminé.")
             return True
 
         except Exception as e:

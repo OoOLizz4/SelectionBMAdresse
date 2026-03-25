@@ -318,7 +318,7 @@ def importer_et_geocoder(chemin_fichier):
     vl = QgsVectorLayer(f'Point?crs=EPSG:{epsg}', nom, 'memory')
     pr = vl.dataProvider()
     # ← AJOUT : tous les champs du fichier sont conservés (pas seulement adresse/lat/lon)
-    pr.addAttributes([QgsField(col[:10], QVariant.String) for col in colonnes])
+    pr.addAttributes([QgsField(col[:10],QVariant.String) for col in colonnes])
     vl.updateFields()
 
     features, nb_erreurs, nb_hors_france = [], 0, 0
@@ -342,6 +342,14 @@ def importer_et_geocoder(chemin_fichier):
     if epsg == 4326 and vl.featureCount() > 0:
         vl = _reprojeter_vers_l93(vl)
     QgsProject.instance().addMapLayer(vl)
+
+    # Chargement du style customisé
+    plugin_dir = os.path.dirname(__file__)
+
+    style_path = os.path.join(plugin_dir, 'styleCouches', 'style_points.qml')
+
+    vl.loadNamedStyle(style_path)
+    vl.triggerRepaint()
 
     # ← AJOUT : message de confirmation avec résumé
     QMessageBox.information(
