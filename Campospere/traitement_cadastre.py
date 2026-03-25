@@ -59,7 +59,7 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
             points_pour_traitement = parameters['input_points']
 
 
-        feedback.setCurrentStep(1)
+        feedback.setCurrentStep(0)
         if feedback.isCanceled():
             return {}
         
@@ -67,15 +67,12 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
         alg_params = {
             'INPUT': parameters['parcelles_cadastrales'],
             'METHOD': 1,  # Structure
-            #Ajout en paramettre
-            'INTERSECT': points_pour_traitement,
-            'PREDICATE': [0, 5],  # 0 = intersecte, 5 = intérieur
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
         }
         outputs['RparerLesGomtries'] = processing.run('native:fixgeometries', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
 
         #feedback.setCurrentStep(1)
-        feedback.setCurrentStep(2)
+        feedback.setCurrentStep(1)
         if feedback.isCanceled():
             return {}
 
@@ -83,13 +80,14 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
         # Extraire par localisation : on choisit les parcelles dans lesquelles il y a des points
         alg_params = {
             'INPUT': outputs['RparerLesGomtries']['OUTPUT'],
-            'INTERSECT': parameters['input_points'],
-            'PREDICATE': [0],  # intersecte
+            # 'INTERSECT': parameters 'input_points'],
+            'INTERSECT': points_pour_traitement,
+            'PREDICATE': [0, 5],  # 0 = intersecte, 5 = intérieur
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
         }
         outputs['ExtraireParLocalisation'] = processing.run('native:extractbylocation', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
 
-        feedback.setCurrentStep(1)
+        feedback.setCurrentStep(2)
         if feedback.isCanceled():
             return {}
         
@@ -115,7 +113,7 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
         }
         outputs['JoindreLesAttributsParLocalisation'] = processing.run('native:joinattributesbylocation', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
 
-        feedback.setCurrentStep(2)
+        feedback.setCurrentStep(3)
         if feedback.isCanceled():
             return {}
 
@@ -128,7 +126,7 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
         }
         outputs['RenommerLeChamp'] = processing.run('native:renametablefield', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
 
-        feedback.setCurrentStep(3)
+        feedback.setCurrentStep(4)
         if feedback.isCanceled():
             return {}
         

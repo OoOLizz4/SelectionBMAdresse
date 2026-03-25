@@ -38,6 +38,9 @@ import processing
 #Chargement du code de traitement situé dans ce dossier 
 from .traitement_cadastre import *
 
+#Import geocodage 
+from .geocodage import importer_et_geocoder
+
 # Import du code pour le dialog
 from .extract_bat_modulaire_dialog import CamposphereDialog
 import os.path
@@ -215,6 +218,9 @@ class Camposphere:
             self.dlg.boutonVCadastre.clicked.connect(self.load_shp_Cadastre)
             self.dlg.boutonVResult.clicked.connect(self.create_nom_resultat)
             self.dlg.boutonLancement.clicked.connect(self.traitement)
+        #nouveau bouton de géocodage
+            self.dlg.boutonGeocodage.clicked.connect(self.load_geocodage_fichier)
+
 
         # Show the dialog
         self.dlg.show()
@@ -273,6 +279,23 @@ class Camposphere:
                     layerSty.triggerRepaint()
 
                     QMessageBox.information(None, "Chargement réussi", f"Fichier chargé avec {self.adresse.featureCount()} objets géométriques.")
+
+    
+ # ********************* Fonction pour geocodage ************************
+    def load_geocodage_fichier(self):
+        file_dialog = QFileDialog()
+        file_dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
+        file_dialog.setNameFilter("Fichiers tabulaires (*.csv *.xlsx *.xls)")
+
+        if file_dialog.exec():
+            file_paths = file_dialog.selectedFiles()
+            if file_paths:
+                layer = importer_et_geocoder(file_paths[0])
+                if layer and layer.isValid():
+                    self.adresse = layer
+                    self.dlg.lineAdresse.setText(f"[GEOCODÉ] {layer.name()}")
+
+
 
     # ********************* Fonction pour charger un shp lorsque le boutonVCadastre est cliqué ************************
 
@@ -379,13 +402,49 @@ class Camposphere:
     # ********************* Fonction pour démarrer les traitements ************************
 
     def traitement(self):
+
+# AJOUT : recuperer les couches choisies dans les combos
+        layer_id = self.dlg.comboAdresse.currentData()
+        if layer_id:
+            self.adresse = QgsProject.instance().mapLayer(layer_id)
+
+        layer_id = self.dlg.comboBM.currentData()
+        if layer_id:
+            self.bm = QgsProject.instance().mapLayer(layer_id)
+
+        layer_id = self.dlg.comboCadastre.currentData()
+        if layer_id:
+            self.cadastre = QgsProject.instance().mapLayer(layer_id)
+
         QMessageBox.information(None, "Outil développement", f"._.")
 
         try :
+            
             #y'a des problèmes lors du chargement du WFS, j'essaie de régler ça plus tard.
-            processing.run("providerT:selectionBMCadastre", {'bm': self.bm ,'input_points': self.adresse ,'parcelles_cadastrales':self.cadastre, 'nom_sortie': self.nomSortie, 'Bm_adresse_selec':'TEMPORARY_OUTPUT'})
-            QMessageBox.information(None, "Traitement fini.", f"Le traitement est terminé.")
+            if self.bm is None or self.adresse is None or self.cadastre is None:
+                QMessageBox.warning(None, "Erreur", "Merci de charger les couches.")
+                return False
+
+            params_selection = {
+                'bm': self.bm,
+                'input_points': self.adresse,
+                'parcelles_cadastrales': self.cadastre,
+                'nom_sortie': self.nomSortie,
+                'Bm_adresse_selec': 'TEMPORARY_OUTPUT'
+            }
+
+            processing.run(
+                "providerT:selectionBMCadastre",
+                params_selection
+            )
+
+            QMessageBox.information(None, "Traitement lancé", "Le traitement est terminé.")
+            return True
 
         except Exception as e:
-            QMessageBox.warning(None, "Erreur", f"Une erreur à eu lieu. Ajoutez des fichiers ou consultez la console. {str(e)}")
+            QMessageBox.warning(
+                None,
+                "Erreur",
+                f"Une erreur a eu lieu. Ajoutez des fichiers ou consultez la console. {str(e)}"
+            )
             return False
