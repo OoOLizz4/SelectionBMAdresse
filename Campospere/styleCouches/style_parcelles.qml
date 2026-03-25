@@ -1,18 +1,18 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis symbologyReferenceScale="-1" autoRefreshMode="Disabled" readOnly="0" autoRefreshTime="0" labelsEnabled="0" minScale="100000000" simplifyDrawingHints="1" simplifyAlgorithm="0" simplifyDrawingTol="1" version="3.40.7-Bratislava" styleCategories="AllStyleCategories" simplifyMaxScale="1" hasScaleBasedVisibilityFlag="0" maxScale="0" simplifyLocal="1">
+<qgis readOnly="0" hasScaleBasedVisibilityFlag="0" maxScale="0" autoRefreshTime="0" simplifyMaxScale="1" styleCategories="AllStyleCategories" simplifyAlgorithm="0" autoRefreshMode="Disabled" simplifyDrawingHints="1" simplifyLocal="1" simplifyDrawingTol="1" symbologyReferenceScale="-1" labelsEnabled="0" version="3.40.7-Bratislava" minScale="100000000">
   <flags>
     <Identifiable>1</Identifiable>
     <Removable>1</Removable>
     <Searchable>1</Searchable>
     <Private>0</Private>
   </flags>
-  <temporal mode="0" startExpression="" endExpression="" fixedDuration="0" durationField="contenance" accumulate="0" endField="" limitMode="0" durationUnit="min" startField="created" enabled="0">
+  <temporal startExpression="" accumulate="0" enabled="0" durationField="contenance" mode="0" endExpression="" limitMode="0" endField="" fixedDuration="0" startField="created" durationUnit="min">
     <fixedRange>
       <start></start>
       <end></end>
     </fixedRange>
   </temporal>
-  <elevation zscale="1" type="IndividualFeatures" clamping="Terrain" binding="Centroid" zoffset="0" extrusionEnabled="0" showMarkerSymbolInSurfacePlots="0" symbology="Line" extrusion="0" respectLayerSymbol="1">
+  <elevation extrusionEnabled="0" type="IndividualFeatures" clamping="Terrain" binding="Centroid" showMarkerSymbolInSurfacePlots="0" extrusion="0" zoffset="0" symbology="Line" respectLayerSymbol="1" zscale="1">
     <data-defined-properties>
       <Option type="Map">
         <Option name="name" type="QString" value=""/>
@@ -21,7 +21,7 @@
       </Option>
     </data-defined-properties>
     <profileLineSymbol>
-      <symbol name="" frame_rate="10" type="line" is_animated="0" clip_to_extent="1" alpha="1" force_rhr="0">
+      <symbol is_animated="0" name="" type="line" alpha="1" force_rhr="0" clip_to_extent="1" frame_rate="10">
         <data_defined_properties>
           <Option type="Map">
             <Option name="name" type="QString" value=""/>
@@ -29,7 +29,7 @@
             <Option name="type" type="QString" value="collection"/>
           </Option>
         </data_defined_properties>
-        <layer locked="0" pass="0" id="{ca1ce341-6748-4702-99a7-bac0a01266c9}" class="SimpleLine" enabled="1">
+        <layer pass="0" enabled="1" locked="0" id="{ca1ce341-6748-4702-99a7-bac0a01266c9}" class="SimpleLine">
           <Option type="Map">
             <Option name="align_dash_pattern" type="QString" value="0"/>
             <Option name="capstyle" type="QString" value="square"/>
@@ -70,7 +70,7 @@
       </symbol>
     </profileLineSymbol>
     <profileFillSymbol>
-      <symbol name="" frame_rate="10" type="fill" is_animated="0" clip_to_extent="1" alpha="1" force_rhr="0">
+      <symbol is_animated="0" name="" type="fill" alpha="1" force_rhr="0" clip_to_extent="1" frame_rate="10">
         <data_defined_properties>
           <Option type="Map">
             <Option name="name" type="QString" value=""/>
@@ -78,7 +78,7 @@
             <Option name="type" type="QString" value="collection"/>
           </Option>
         </data_defined_properties>
-        <layer locked="0" pass="0" id="{d5f99cb6-5d6d-42b1-9b0e-d0a838d51a76}" class="SimpleFill" enabled="1">
+        <layer pass="0" enabled="1" locked="0" id="{d5f99cb6-5d6d-42b1-9b0e-d0a838d51a76}" class="SimpleFill">
           <Option type="Map">
             <Option name="border_width_map_unit_scale" type="QString" value="3x:0,0,0,0,0,0"/>
             <Option name="color" type="QString" value="114,155,111,255,rgb:0.44705882352941179,0.60784313725490191,0.43529411764705883,1"/>
@@ -103,7 +103,7 @@
       </symbol>
     </profileFillSymbol>
     <profileMarkerSymbol>
-      <symbol name="" frame_rate="10" type="marker" is_animated="0" clip_to_extent="1" alpha="1" force_rhr="0">
+      <symbol is_animated="0" name="" type="marker" alpha="1" force_rhr="0" clip_to_extent="1" frame_rate="10">
         <data_defined_properties>
           <Option type="Map">
             <Option name="name" type="QString" value=""/>
@@ -111,7 +111,7 @@
             <Option name="type" type="QString" value="collection"/>
           </Option>
         </data_defined_properties>
-        <layer locked="0" pass="0" id="{4db1801f-85ee-4762-8eac-64b2d5b9484b}" class="SimpleMarker" enabled="1">
+        <layer pass="0" enabled="1" locked="0" id="{4db1801f-85ee-4762-8eac-64b2d5b9484b}" class="SimpleMarker">
           <Option type="Map">
             <Option name="angle" type="QString" value="0"/>
             <Option name="cap_style" type="QString" value="square"/>
@@ -144,9 +144,9 @@
       </symbol>
     </profileMarkerSymbol>
   </elevation>
-  <renderer-v2 enableorderby="0" symbollevels="0" type="singleSymbol" forceraster="0" referencescale="-1">
+  <renderer-v2 type="singleSymbol" referencescale="-1" enableorderby="0" symbollevels="0" forceraster="0">
     <symbols>
-      <symbol name="0" frame_rate="10" type="fill" is_animated="0" clip_to_extent="1" alpha="1" force_rhr="0">
+      <symbol is_animated="0" name="0" type="fill" alpha="1" force_rhr="0" clip_to_extent="1" frame_rate="10">
         <data_defined_properties>
           <Option type="Map">
             <Option name="name" type="QString" value=""/>
@@ -154,10 +154,10 @@
             <Option name="type" type="QString" value="collection"/>
           </Option>
         </data_defined_properties>
-        <layer locked="0" pass="0" id="{491197cb-ca3c-4f89-8623-41fba9b169ef}" class="SimpleFill" enabled="1">
+        <layer pass="0" enabled="1" locked="0" id="{491197cb-ca3c-4f89-8623-41fba9b169ef}" class="SimpleFill">
           <Option type="Map">
             <Option name="border_width_map_unit_scale" type="QString" value="3x:0,0,0,0,0,0"/>
-            <Option name="color" type="QString" value="213,180,60,0,rgb:0.83529411764705885,0.70588235294117652,0.23529411764705882,0"/>
+            <Option name="color" type="QString" value="213,180,60,54,rgb:0.83529411764705885,0.70588235294117652,0.23529411764705882,0.21052872510872053"/>
             <Option name="joinstyle" type="QString" value="bevel"/>
             <Option name="offset" type="QString" value="0,0"/>
             <Option name="offset_map_unit_scale" type="QString" value="3x:0,0,0,0,0,0"/>
@@ -191,7 +191,7 @@
   <selection mode="Default">
     <selectionColor invalid="1"/>
     <selectionSymbol>
-      <symbol name="" frame_rate="10" type="fill" is_animated="0" clip_to_extent="1" alpha="1" force_rhr="0">
+      <symbol is_animated="0" name="" type="fill" alpha="1" force_rhr="0" clip_to_extent="1" frame_rate="10">
         <data_defined_properties>
           <Option type="Map">
             <Option name="name" type="QString" value=""/>
@@ -199,7 +199,7 @@
             <Option name="type" type="QString" value="collection"/>
           </Option>
         </data_defined_properties>
-        <layer locked="0" pass="0" id="{9b7d7cfe-5832-4825-97e8-41d1ac2ab33b}" class="SimpleFill" enabled="1">
+        <layer pass="0" enabled="1" locked="0" id="{9b7d7cfe-5832-4825-97e8-41d1ac2ab33b}" class="SimpleFill">
           <Option type="Map">
             <Option name="border_width_map_unit_scale" type="QString" value="3x:0,0,0,0,0,0"/>
             <Option name="color" type="QString" value="0,0,255,255,rgb:0,0,1,1"/>
@@ -234,7 +234,7 @@
   <blendMode>0</blendMode>
   <featureBlendMode>0</featureBlendMode>
   <layerOpacity>1</layerOpacity>
-  <geometryOptions geometryPrecision="0" removeDuplicateNodes="0">
+  <geometryOptions removeDuplicateNodes="0" geometryPrecision="0">
     <activeChecks/>
     <checkConfiguration type="Map">
       <Option name="QgsGeometryGapCheck" type="Map">
@@ -315,44 +315,44 @@
     <alias name="" index="7" field="updated"/>
   </aliases>
   <splitPolicies>
-    <policy field="id" policy="Duplicate"/>
-    <policy field="commune" policy="Duplicate"/>
-    <policy field="prefixe" policy="Duplicate"/>
-    <policy field="section" policy="Duplicate"/>
-    <policy field="numero" policy="Duplicate"/>
-    <policy field="contenance" policy="Duplicate"/>
-    <policy field="created" policy="Duplicate"/>
-    <policy field="updated" policy="Duplicate"/>
+    <policy policy="Duplicate" field="id"/>
+    <policy policy="Duplicate" field="commune"/>
+    <policy policy="Duplicate" field="prefixe"/>
+    <policy policy="Duplicate" field="section"/>
+    <policy policy="Duplicate" field="numero"/>
+    <policy policy="Duplicate" field="contenance"/>
+    <policy policy="Duplicate" field="created"/>
+    <policy policy="Duplicate" field="updated"/>
   </splitPolicies>
   <duplicatePolicies>
-    <policy field="id" policy="Duplicate"/>
-    <policy field="commune" policy="Duplicate"/>
-    <policy field="prefixe" policy="Duplicate"/>
-    <policy field="section" policy="Duplicate"/>
-    <policy field="numero" policy="Duplicate"/>
-    <policy field="contenance" policy="Duplicate"/>
-    <policy field="created" policy="Duplicate"/>
-    <policy field="updated" policy="Duplicate"/>
+    <policy policy="Duplicate" field="id"/>
+    <policy policy="Duplicate" field="commune"/>
+    <policy policy="Duplicate" field="prefixe"/>
+    <policy policy="Duplicate" field="section"/>
+    <policy policy="Duplicate" field="numero"/>
+    <policy policy="Duplicate" field="contenance"/>
+    <policy policy="Duplicate" field="created"/>
+    <policy policy="Duplicate" field="updated"/>
   </duplicatePolicies>
   <defaults>
-    <default applyOnUpdate="0" expression="" field="id"/>
-    <default applyOnUpdate="0" expression="" field="commune"/>
-    <default applyOnUpdate="0" expression="" field="prefixe"/>
-    <default applyOnUpdate="0" expression="" field="section"/>
-    <default applyOnUpdate="0" expression="" field="numero"/>
-    <default applyOnUpdate="0" expression="" field="contenance"/>
-    <default applyOnUpdate="0" expression="" field="created"/>
-    <default applyOnUpdate="0" expression="" field="updated"/>
+    <default expression="" applyOnUpdate="0" field="id"/>
+    <default expression="" applyOnUpdate="0" field="commune"/>
+    <default expression="" applyOnUpdate="0" field="prefixe"/>
+    <default expression="" applyOnUpdate="0" field="section"/>
+    <default expression="" applyOnUpdate="0" field="numero"/>
+    <default expression="" applyOnUpdate="0" field="contenance"/>
+    <default expression="" applyOnUpdate="0" field="created"/>
+    <default expression="" applyOnUpdate="0" field="updated"/>
   </defaults>
   <constraints>
-    <constraint notnull_strength="0" exp_strength="0" field="id" constraints="0" unique_strength="0"/>
-    <constraint notnull_strength="0" exp_strength="0" field="commune" constraints="0" unique_strength="0"/>
-    <constraint notnull_strength="0" exp_strength="0" field="prefixe" constraints="0" unique_strength="0"/>
-    <constraint notnull_strength="0" exp_strength="0" field="section" constraints="0" unique_strength="0"/>
-    <constraint notnull_strength="0" exp_strength="0" field="numero" constraints="0" unique_strength="0"/>
-    <constraint notnull_strength="0" exp_strength="0" field="contenance" constraints="0" unique_strength="0"/>
-    <constraint notnull_strength="0" exp_strength="0" field="created" constraints="0" unique_strength="0"/>
-    <constraint notnull_strength="0" exp_strength="0" field="updated" constraints="0" unique_strength="0"/>
+    <constraint exp_strength="0" constraints="0" notnull_strength="0" field="id" unique_strength="0"/>
+    <constraint exp_strength="0" constraints="0" notnull_strength="0" field="commune" unique_strength="0"/>
+    <constraint exp_strength="0" constraints="0" notnull_strength="0" field="prefixe" unique_strength="0"/>
+    <constraint exp_strength="0" constraints="0" notnull_strength="0" field="section" unique_strength="0"/>
+    <constraint exp_strength="0" constraints="0" notnull_strength="0" field="numero" unique_strength="0"/>
+    <constraint exp_strength="0" constraints="0" notnull_strength="0" field="contenance" unique_strength="0"/>
+    <constraint exp_strength="0" constraints="0" notnull_strength="0" field="created" unique_strength="0"/>
+    <constraint exp_strength="0" constraints="0" notnull_strength="0" field="updated" unique_strength="0"/>
   </constraints>
   <constraintExpressions>
     <constraint desc="" exp="" field="id"/>
@@ -370,15 +370,15 @@
   </attributeactions>
   <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
     <columns>
-      <column name="numero" type="field" width="-1" hidden="0"/>
-      <column name="section" type="field" width="-1" hidden="0"/>
-      <column name="contenance" type="field" width="-1" hidden="0"/>
-      <column name="id" type="field" width="-1" hidden="0"/>
-      <column name="commune" type="field" width="-1" hidden="0"/>
-      <column name="prefixe" type="field" width="-1" hidden="0"/>
-      <column name="created" type="field" width="-1" hidden="0"/>
-      <column name="updated" type="field" width="-1" hidden="0"/>
-      <column type="actions" width="-1" hidden="1"/>
+      <column width="-1" name="numero" type="field" hidden="0"/>
+      <column width="-1" name="section" type="field" hidden="0"/>
+      <column width="-1" name="contenance" type="field" hidden="0"/>
+      <column width="-1" name="id" type="field" hidden="0"/>
+      <column width="-1" name="commune" type="field" hidden="0"/>
+      <column width="-1" name="prefixe" type="field" hidden="0"/>
+      <column width="-1" name="created" type="field" hidden="0"/>
+      <column width="-1" name="updated" type="field" hidden="0"/>
+      <column width="-1" type="actions" hidden="1"/>
     </columns>
   </attributetableconfig>
   <conditionalstyles>

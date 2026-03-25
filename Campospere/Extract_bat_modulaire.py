@@ -210,9 +210,9 @@ class Camposphere:
             self.first_start = False
             self.dlg = CamposphereDialog()
         # Connexion avec les boutons de l'interface
-            self.dlg.boutonVAdresse.clicked.connect(self.load_csv_Adresse)
-            self.dlg.boutonVBM.clicked.connect(self.load_shapefile_BM)
             self.dlg.boutonVCadastre.clicked.connect(self.load_shp_Cadastre)
+            self.dlg.boutonVBM.clicked.connect(self.load_shapefile_BM)
+            self.dlg.boutonVAdresse.clicked.connect(self.load_csv_Adresse)
             self.dlg.boutonVResult.clicked.connect(self.create_nom_resultat)
             self.dlg.boutonLancement.clicked.connect(self.traitement)
 
@@ -296,7 +296,7 @@ class Camposphere:
                     layerSty.loadNamedStyle(style_path)
                     layerSty.triggerRepaint()
 
-                    QMessageBox.information(None, "Chargement réussi", f"Fichier chargé avec {self.adresse.featureCount()} objets géométriques.")
+                    QMessageBox.information(None, "Chargement réussi", f"Fichier chargé avec {self.cadastre.featureCount()} objets géométriques.")
 
     
     # ********************* Fonction qui créé un shapefile du nom choisi ************************
