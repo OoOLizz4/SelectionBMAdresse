@@ -58,10 +58,19 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
         if feedback.isCanceled():
             return {}
 
+        # Créer un index spatial : je créée un index spatial pour le cadastre pour accélérer le traitement
+        alg_params = {
+            'INPUT': outputs['RparerLesGomtries']['OUTPUT']
+        }
+        outputs['CrerUnIndexSpatial'] = processing.run('native:createspatialindex', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+
+        feedback.setCurrentStep(1)
+        if feedback.isCanceled():
+            return {}
 
         # Extraire par localisation : on choisit les parcelles dans lesquelles il y a des points
         alg_params = {
-            'INPUT': outputs['RparerLesGomtries']['OUTPUT'],
+            'INPUT': outputs['CrerUnIndexSpatial']['OUTPUT'],
             'INTERSECT': parameters['input_points'],
             'PREDICATE': [0],  # intersecte
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
@@ -76,7 +85,7 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
         alg_params = {
             'INPUT': parameters['bm'],
             'INTERSECT': outputs['ExtraireParLocalisation']['OUTPUT'],
-            'PREDICATE': [6],  # est à l'intérieur
+            'PREDICATE': [0],  # intersecte
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT      
         }
         outputs['ExtraireParLocalisation'] = processing.run('native:extractbylocation', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
