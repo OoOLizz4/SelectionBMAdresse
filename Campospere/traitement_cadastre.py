@@ -67,11 +67,15 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
         alg_params = {
             'INPUT': parameters['parcelles_cadastrales'],
             'METHOD': 1,  # Structure
+            #Ajout en paramettre
+            'INTERSECT': points_pour_traitement,
+            'PREDICATE': [0, 5],  # 0 = intersecte, 5 = intérieur
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
         }
         outputs['RparerLesGomtries'] = processing.run('native:fixgeometries', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
 
-        feedback.setCurrentStep(1)
+        #feedback.setCurrentStep(1)
+        feedback.setCurrentStep(2)
         if feedback.isCanceled():
             return {}
 
