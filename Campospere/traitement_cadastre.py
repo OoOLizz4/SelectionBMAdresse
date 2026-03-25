@@ -45,17 +45,28 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
         feedback.setCurrentStep(1)
         if feedback.isCanceled():
             return {}
+        
+         # Réparer les géométries : je répare la géométrie des parcelles cadastrales pour avoir un meilleur résultat lors du traitement
+        alg_params = {
+            'INPUT': parameters['parcelles_cadastrales'],
+            'METHOD': 1,  # Structure
+            'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
+        }
+        outputs['RparerLesGomtries'] = processing.run('native:fixgeometries', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+
+        feedback.setCurrentStep(1)
+        if feedback.isCanceled():
+            return {}
+
 
         # Extraire par localisation : on choisit les parcelles dans lesquelles il y a des points
         alg_params = {
-            'INPUT': parameters['parcelles_cadastrales'],
+            'INPUT': outputs['RparerLesGomtries']['OUTPUT'],
             'INTERSECT': parameters['input_points'],
             'PREDICATE': [0],  # intersecte
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
         }
         outputs['ExtraireParLocalisation'] = processing.run('native:extractbylocation', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
-
-        cheminSortie = "C:/temp/"+parameters['nom_sortie']+".shp"
 
         feedback.setCurrentStep(1)
         if feedback.isCanceled():
@@ -66,12 +77,53 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
             'INPUT': parameters['bm'],
             'INTERSECT': outputs['ExtraireParLocalisation']['OUTPUT'],
             'PREDICATE': [6],  # est à l'intérieur
-            'OUTPUT': cheminSortie      }
+            'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT      
+        }
         outputs['ExtraireParLocalisation'] = processing.run('native:extractbylocation', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
-        results['Bm_adresse_selec'] = outputs['ExtraireParLocalisation']['OUTPUT']
+
+        # Joindre les attributs par localisation : on ajoute le nom de la parcelle cadastrale à la table d'attribut
+        alg_params = {
+            'DISCARD_NONMATCHING': False,
+            'INPUT': outputs['ExtraireParLocalisation']['OUTPUT'],
+            'JOIN': outputs['RparerLesGomtries']['OUTPUT'],
+            'JOIN_FIELDS': ['id'],
+            'METHOD': 0,  # Cr�er une entit� distincte pour chaque entit� correspondante (un � plusieurs)
+            'PREDICATE': [0],  # intersecte
+            'PREFIX': '',
+            'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
+        }
+        outputs['JoindreLesAttributsParLocalisation'] = processing.run('native:joinattributesbylocation', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+
+        feedback.setCurrentStep(2)
+        if feedback.isCanceled():
+            return {}
+
+        # Renommer le champ : changement du nom pour un nom plus parlant
+        alg_params = {
+            'FIELD': 'id_2',
+            'INPUT': outputs['JoindreLesAttributsParLocalisation']['OUTPUT'],
+            'NEW_NAME': 'id_parcelle',
+            'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
+        }
+        outputs['RenommerLeChamp'] = processing.run('native:renametablefield', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+
+        feedback.setCurrentStep(3)
+        if feedback.isCanceled():
+            return {}
+        
+        cheminSortieShp = "C:/temp/"+parameters['nom_sortie']+".shp"
+
+        # Supprimer champ(s) : suppression des champs qui sont inutiles
+        alg_params = {
+            'COLUMN': ['Section_ca','numero_par','Section__1','numero_p_1'],
+            'INPUT': outputs['RenommerLeChamp']['OUTPUT'],
+            'OUTPUT': cheminSortieShp
+        }
+        outputs['SupprimerChamps'] = processing.run('native:deletecolumn', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+        results['Testtablepropre'] = outputs['SupprimerChamps']['OUTPUT']
 
         # Transformation du résultat en couche QGis et affichage de celle-ci
-        coucheSortie = QgsVectorLayer(cheminSortie, parameters['nom_sortie'], "ogr")
+        coucheSortie = QgsVectorLayer(cheminSortieShp, parameters['nom_sortie'], "ogr")
         QgsProject.instance().addMapLayer(coucheSortie)
 
         # Chargement du style customisé

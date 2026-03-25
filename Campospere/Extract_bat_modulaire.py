@@ -231,7 +231,7 @@ class Camposphere:
     def load_shapefile_BM(self):
         file_dialog = QFileDialog()
         file_dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
-        file_dialog.setNameFilter("Shapefiles (*.shp)")
+        file_dialog.setNameFilter("Shapefiles (*.shp));;GeoPackage (*.shp)")
         file_dialog.setViewMode(QFileDialog.ViewMode.List)
 
         if file_dialog.exec():
@@ -255,7 +255,7 @@ class Camposphere:
     def load_csv_Adresse(self):
         file_dialog = QFileDialog()
         file_dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
-        file_dialog.setNameFilter("Shapefiles (*.shp)")
+        file_dialog.setNameFilter("Shapefiles (*.shp));;GeoPackage (*.shp)")
         file_dialog.setViewMode(QFileDialog.ViewMode.List)
 
         if file_dialog.exec():
@@ -279,7 +279,7 @@ class Camposphere:
     def load_shp_Cadastre(self):
         file_dialog = QFileDialog()
         file_dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
-        file_dialog.setNameFilter("Shapefiles (*.shp)")
+        file_dialog.setNameFilter("Shapefiles (*.shp));;GeoPackage (*.shp)")
         file_dialog.setViewMode(QFileDialog.ViewMode.List)
 
         if file_dialog.exec():
@@ -379,14 +379,13 @@ class Camposphere:
     # ********************* Fonction pour démarrer les traitements ************************
 
     def traitement(self):
-        QMessageBox.information(None, "Bouton pressé", f"o.O")
+        QMessageBox.information(None, "Outil développement", f"._.")
 
         try :
             #y'a des problèmes lors du chargement du WFS, j'essaie de régler ça plus tard.
             processing.run("providerT:selectionBMCadastre", {'bm': self.bm ,'input_points': self.adresse ,'parcelles_cadastrales':self.cadastre, 'nom_sortie': self.nomSortie, 'Bm_adresse_selec':'TEMPORARY_OUTPUT'})
             QMessageBox.information(None, "Traitement fini.", f"Le traitement est terminé.")
 
-            return True
         except Exception as e:
             QMessageBox.warning(None, "Erreur", f"Une erreur à eu lieu. Ajoutez des fichiers ou consultez la console. {str(e)}")
             return False
