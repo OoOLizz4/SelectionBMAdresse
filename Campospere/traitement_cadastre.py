@@ -42,6 +42,23 @@ class SelectionBmSelonAdresse(QgsProcessingAlgorithm):
         results = {}
         outputs = {}
 
+        
+        #**************************# ← AJOUTER : reprojection des points en L93 ******************************
+        from qgis.core import QgsCoordinateReferenceSystem
+        couche_points = self.parameterAsVectorLayer(parameters, 'input_points', context)
+        crs_l93 = QgsCoordinateReferenceSystem("EPSG:2154")
+
+        if couche_points.crs() != crs_l93:
+            outputs['points_l93'] = processing.run(
+                'native:reprojectlayer',
+                {'INPUT': couche_points, 'TARGET_CRS': crs_l93, 'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT},
+                context=context, feedback=feedback, is_child_algorithm=True
+            )
+            points_pour_traitement = outputs['points_l93']['OUTPUT']
+        else:
+            points_pour_traitement = parameters['input_points']
+
+
         feedback.setCurrentStep(1)
         if feedback.isCanceled():
             return {}
