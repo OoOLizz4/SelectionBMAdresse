@@ -231,7 +231,7 @@ class Camposphere:
     def load_shapefile_BM(self):
         file_dialog = QFileDialog()
         file_dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
-        file_dialog.setNameFilter("Shapefiles (*.shp));;GeoPackage (*.shp)")
+        file_dialog.setNameFilter("Shapefiles (*.shp));;GeoPackage (*.gpkg)")
         file_dialog.setViewMode(QFileDialog.ViewMode.List)
 
         if file_dialog.exec():
@@ -255,7 +255,7 @@ class Camposphere:
     def load_csv_Adresse(self):
         file_dialog = QFileDialog()
         file_dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
-        file_dialog.setNameFilter("Shapefiles (*.shp));;GeoPackage (*.shp)")
+        file_dialog.setNameFilter("Shapefiles (*.shp));;GeoPackage (*.gpkg)")
         file_dialog.setViewMode(QFileDialog.ViewMode.List)
 
         if file_dialog.exec():
