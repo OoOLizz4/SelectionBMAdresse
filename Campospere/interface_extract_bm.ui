@@ -39,6 +39,20 @@
        </property>
       </widget>
      </item>
+
+<!-- boutonGeocodage -->
+     <item row="1" column="3">
+      <widget class="QPushButton" name="boutonGeocodage">
+       <property name="text">
+        <string>Géocoder CSV/XLS</string>
+       </property>
+       <property name="toolTip">
+        <string>Importer un fichier CSV ou Excel et le convertir en points</string>
+       </property>
+      </widget>
+     </item>
+     <!--   -->
+
      <item row="10" column="1">
       <widget class="QPushButton" name="boutonLancement">
        <property name="text">
